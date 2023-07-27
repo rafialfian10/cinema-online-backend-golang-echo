@@ -6,6 +6,7 @@ import (
 	"cinemaonline/pkg/bcrypt"
 	jwtToken "cinemaonline/pkg/jwt"
 	"cinemaonline/repositories"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // Handle struct
@@ -36,6 +38,17 @@ func (h *handlerAuth) Register(c echo.Context) error {
 	err := validation.Struct(request)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	// Check if the username or email already exists in the database
+	checkUser, err := h.AuthRepository.FindUserByUsernameOrEmail(request.Username, request.Email)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	if checkUser.ID != 0 {
+		errorMessage := "Username or email already exists."
+		return c.JSON(http.StatusConflict, dto.ErrorResult{Status: http.StatusConflict, Message: errorMessage})
 	}
 
 	password, err := bcrypt.HashingPassword(request.Password)

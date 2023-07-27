@@ -8,6 +8,7 @@ import (
 
 type AuthRepository interface {
 	Register(user models.User) (models.User, error)
+	FindUserByUsernameOrEmail(username, email string) (models.User, error)
 	Login(email string) (models.User, error)
 	Getuser(ID int) (models.User, error)
 }
@@ -17,14 +18,22 @@ func RepositoryAuth(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-// membuat struct method Register(memanggil struct dengan struct function)
+// function register
 func (r *repository) Register(user models.User) (models.User, error) {
 	err := r.db.Create(&user).Error
 
 	return user, err
 }
 
-// membuat struct method Login(memanggil struct dengan struct function)
+// function check data username & email
+func (r *repository) FindUserByUsernameOrEmail(username, email string) (models.User, error) {
+	var user models.User
+	err := r.db.First(&user, "username=? OR email=?", username, email).Error
+
+	return user, err
+}
+
+// function login
 func (r *repository) Login(email string) (models.User, error) {
 	var user models.User
 
@@ -34,6 +43,7 @@ func (r *repository) Login(email string) (models.User, error) {
 	return user, err
 }
 
+// function get user id
 func (r *repository) Getuser(ID int) (models.User, error) {
 	var user models.User
 	err := r.db.First(&user, ID).Error
