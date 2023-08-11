@@ -13,20 +13,24 @@ type AuthRepository interface {
 	Getuser(ID int) (models.User, error)
 }
 
+type authRepository struct {
+	db *gorm.DB
+}
+
 // membuat function RepositoryAuth. parameter pointer ke gorm, return repository{db}. ini akan dipanggil di routes
-func RepositoryAuth(db *gorm.DB) *repository {
-	return &repository{db}
+func RepositoryAuth(db *gorm.DB) *authRepository {
+	return &authRepository{db}
 }
 
 // function register
-func (r *repository) Register(user models.User) (models.User, error) {
+func (r *authRepository) Register(user models.User) (models.User, error) {
 	err := r.db.Create(&user).Error
 
 	return user, err
 }
 
 // function check data username & email
-func (r *repository) FindUserByUsernameOrEmail(username, email string) (models.User, error) {
+func (r *authRepository) FindUserByUsernameOrEmail(username, email string) (models.User, error) {
 	var user models.User
 	err := r.db.First(&user, "username=? OR email=?", username, email).Error
 
@@ -34,7 +38,7 @@ func (r *repository) FindUserByUsernameOrEmail(username, email string) (models.U
 }
 
 // function login
-func (r *repository) Login(email string) (models.User, error) {
+func (r *authRepository) Login(email string) (models.User, error) {
 	var user models.User
 
 	// ambil data user yang email user == request email
@@ -44,7 +48,7 @@ func (r *repository) Login(email string) (models.User, error) {
 }
 
 // function get user id
-func (r *repository) Getuser(ID int) (models.User, error) {
+func (r *authRepository) Getuser(ID int) (models.User, error) {
 	var user models.User
 	err := r.db.First(&user, ID).Error
 

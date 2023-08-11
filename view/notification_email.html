@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <table
+      class="m_8256600843157274032section"
+      width="100%%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+    >
+      <tbody>
+        <tr>
+          <td class="m_8256600843157274032column" align="center">
+            <table
+              style="
+                background-color: #ffffff;
+                border-collapse: collapse;
+                max-width: 600px !important;
+              "
+              width="100%%"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+            >
+              <tbody>
+                <tr>
+                  <td
+                    style="padding: 20px 24px; background-color: #e8a340"
+                    align="left"
+                  >
+                    <img
+                      src="https://res.cloudinary.com/punyasidik/image/upload/v1673784409/WaysBeans/assets/HeaderIcon_zrbfpi.svg"
+                      alt="WaysBeans"
+                      style="max-width: 156px"
+                      class="CToWUd"
+                      data-bit="iit"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="m_8256600843157274032column" align="center">
+            <table
+              style="
+                background-color: #ffffff;
+                border-collapse: collapse;
+                max-width: 600px !important;
+              "
+              width="100%%"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+            >
+              <tbody>
+                <tr>
+                  <td style="padding: 15px 0px">
+                    <h2
+                      style="
+                        color: #1a1a1a;
+                        padding-left: 24px;
+                        padding-right: 24px;
+                      "
+                    >
+                      Transaction {{.TransactionStatus}}
+                    </h2>
+                    <br />
+                    <table
+                      style="color: #1a1a1a"
+                      width="100%%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            style="
+                              padding-left: 24px;
+                              padding-right: 24px;
+                              text-align: left;
+                            "
+                          >
+                            <p style="text-align: left; margin: 0">
+                              Hello {{.UserName}},
+                            </p>
+                            <br />
+                            <p style="text-align: left; margin: 0">
+                              Here are the details of your transaction :
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br />
+                    <!-- <table
+                      style="
+                        color: #1a1a1a;
+                        font-family: Arial, Helvetica, sans-serif;
+                      "
+                      width="100%%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                    >
+                      <tbody>
+                        <tr>
+                          <td style="padding-left: 8px; padding-right: 8px">
+                            <table
+                              width="100%%"
+                              cellspacing="0"
+                              cellpadding="0"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="
+                                      background-color: #fafafa;
+                                      border-left: 0px solid #eeeeee;
+                                      padding-top: 16px;
+                                      padding-bottom: 16px;
+                                      padding-left: 16px;
+                                      padding-right: 16px;
+                                      text-align: left;
+                                    "
+                                  >
+                                    <p
+                                      style="
+                                        color: #ada6ae;
+                                        text-align: left;
+                                        margin: 0;
+                                      "
+                                    >
+                                      Trip Service Provider
+                                    </p>
+                                    <h4 style="text-align: left">
+                                      <span class="il">DEWE TOUR</span>
+                                    </h4>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table> -->
+                    <br />
+                    <table
+                      style="
+                        font-family: Arial, Helvetica, sans-serif;
+                        color: #615a5a;
+                      "
+                      width="100%%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 24px;
+                              padding-right: 16px;
+                              text-align: left;
+                            "
+                            width="35%%"
+                          >
+                            Date
+                          </td>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 16px;
+                              padding-right: 24px;
+                              text-align: left;
+                            "
+                            width="65%%"
+                          >
+                            {{.OrderDate}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="2"
+                            style="padding-left: 24px; padding-right: 24px"
+                          >
+                            <p
+                              style="
+                                border-bottom: 1px solid #f7f6f6;
+                                line-height: 0px;
+                                margin: 0;
+                              "
+                            >
+                              &nbsp;
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="2"
+                            style="padding-left: 24px; padding-right: 24px"
+                          >
+                            <p
+                              style="
+                                border-bottom: 1px solid #f7f6f6;
+                                line-height: 0px;
+                                margin: 0;
+                              "
+                            >
+                              &nbsp;
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="2"
+                            style="padding-left: 24px; padding-right: 24px"
+                          >
+                            <p
+                              style="
+                                border-bottom: 1px solid #f7f6f6;
+                                line-height: 0px;
+                                margin: 0;
+                              "
+                            >
+                              &nbsp;
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 24px;
+                              padding-right: 16px;
+                              vertical-align: middle;
+                              text-align: left;
+                            "
+                          >
+                            Total Transactions
+                          </td>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 16px;
+                              padding-right: 24px;
+                              vertical-align: middle;
+                              text-align: left;
+                            "
+                          >
+                            {{.Total}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="2"
+                            style="padding-left: 24px; padding-right: 24px"
+                          >
+                            <p
+                              style="
+                                border-bottom: 1px solid #f7f6f6;
+                                line-height: 0px;
+                                margin: 0;
+                              "
+                            >
+                              &nbsp;
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 24px;
+                              padding-right: 16px;
+                              vertical-align: middle;
+                              text-align: left;
+                            "
+                          >
+                            Transaction ID
+                          </td>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 16px;
+                              padding-right: 24px;
+                              vertical-align: middle;
+                              text-align: left;
+                            "
+                          >
+                            {{.TransactionID}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="2"
+                            style="padding-left: 24px; padding-right: 24px"
+                          >
+                            <p
+                              style="
+                                border-bottom: 1px solid #f7f6f6;
+                                line-height: 0px;
+                                margin: 0;
+                              "
+                            >
+                              &nbsp;
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 24px;
+                              padding-right: 16px;
+                              vertical-align: top;
+                              text-align: left;
+                            "
+                          >
+                            <p style="padding: 12">Products</p>
+                          </td>
+                          <td
+                            style="
+                              padding-top: 12px;
+                              padding-bottom: 12px;
+                              padding-left: 16px;
+                              padding-right: 24px;
+                              vertical-align: middle;
+                              text-align: left;
+                            "
+                          >
+                            {{range $index, $product := .Products}}
+                            <table
+                              style="
+                                font-family: Arial, Helvetica, sans-serif;
+                                color: #615a5a;
+                                margin-bottom: 25px;
+                              "
+                              width="100%%"
+                              cellspacing="0"
+                              cellpadding="0"
+                              border="0"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 24px;
+                                      padding-right: 16px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    Item
+                                  </td>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 16px;
+                                      padding-right: 24px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    {{$product.ProductName}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    colspan="2"
+                                    style="
+                                      padding-left: 24px;
+                                      padding-right: 24px;
+                                    "
+                                  >
+                                    <p
+                                      style="
+                                        border-bottom: 1px solid #f7f6f6;
+                                        line-height: 0px;
+                                        margin: 0;
+                                      "
+                                    >
+                                      &nbsp;
+                                    </p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 24px;
+                                      padding-right: 16px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    Price
+                                  </td>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 16px;
+                                      padding-right: 24px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    {{$product.Price}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    colspan="2"
+                                    style="
+                                      padding-left: 24px;
+                                      padding-right: 24px;
+                                    "
+                                  >
+                                    <p
+                                      style="
+                                        border-bottom: 1px solid #f7f6f6;
+                                        line-height: 0px;
+                                        margin: 0;
+                                      "
+                                    >
+                                      &nbsp;
+                                    </p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 24px;
+                                      padding-right: 16px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    Qty
+                                  </td>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 16px;
+                                      padding-right: 24px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    {{$product.Qty}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    colspan="2"
+                                    style="
+                                      padding-left: 24px;
+                                      padding-right: 24px;
+                                    "
+                                  >
+                                    <p
+                                      style="
+                                        border-bottom: 1px solid #f7f6f6;
+                                        line-height: 0px;
+                                        margin: 0;
+                                      "
+                                    >
+                                      &nbsp;
+                                    </p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 24px;
+                                      padding-right: 16px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    SubTotal
+                                  </td>
+                                  <td
+                                    style="
+                                      padding-top: 12px;
+                                      padding-bottom: 12px;
+                                      padding-left: 16px;
+                                      padding-right: 24px;
+                                      vertical-align: middle;
+                                      text-align: left;
+                                    "
+                                  >
+                                    {{$product.SubTotal}}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            {{end}}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br />
+                    <table
+                      width="100%%"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            style="
+                              padding-left: 24px;
+                              padding-right: 24px;
+                              text-align: left;
+                            "
+                          >
+                            <p
+                              style="
+                                color: #ada6ae;
+                                text-align: left;
+                                margin: 0;
+                              "
+                            >
+                              Save this email as a reference for your
+                              transaction. Thank you for your order on
+                              WaysBeans.
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr></tr>
+      </tbody>
+    </table>
+  </body>
+</html>

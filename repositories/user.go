@@ -14,40 +14,40 @@ type UserRepository interface {
 	DeleteUser(user models.User, ID int) (models.User, error)
 }
 
-type repository struct {
+type userRepository struct {
 	db *gorm.DB
 }
 
-func RepositoryUser(db *gorm.DB) *repository {
-	return &repository{db}
+func RepositoryUser(db *gorm.DB) *userRepository {
+	return &userRepository{db}
 }
 
-func (r *repository) FindUsers() ([]models.User, error) {
+func (r *userRepository) FindUsers() ([]models.User, error) {
 	var users []models.User
 	err := r.db.Find(&users).Error
 
 	return users, err
 }
 
-func (r *repository) GetUser(ID int) (models.User, error) {
+func (r *userRepository) GetUser(ID int) (models.User, error) {
 	var user models.User
 	err := r.db.First(&user, ID).Error
 
 	return user, err
 }
 
-func (r *repository) CreateUser(user models.User) (models.User, error) {
+func (r *userRepository) CreateUser(user models.User) (models.User, error) {
 	err := r.db.Create(&user).Error
 
 	return user, err
 }
 
-func (r *repository) UpdateUser(user models.User) (models.User, error) {
+func (r *userRepository) UpdateUser(user models.User) (models.User, error) {
 	err := r.db.Debug().Model(&user).Updates(user).Error
 	return user, err
 }
 
-func (r *repository) DeleteUser(user models.User, ID int) (models.User, error) {
+func (r *userRepository) DeleteUser(user models.User, ID int) (models.User, error) {
 	err := r.db.Raw("DELETE FROM users WHERE id=?", ID).Scan(&user).Error
 
 	return user, err

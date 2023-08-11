@@ -30,6 +30,7 @@ func HandlerAuth(AuthRepository repositories.AuthRepository) *handlerAuth {
 // function Register
 func (h *handlerAuth) Register(c echo.Context) error {
 	request := new(dto.RegisterRequest)
+	// Bind adalah fungsi yang digunakan untuk mengambil data dari permintaan HTTP dan mengisi nilai-nilai dalam objek request
 	if err := c.Bind(request); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
@@ -142,8 +143,8 @@ func (h *handlerAuth) Login(c echo.Context) error {
 	loginResponse := dto.LoginResponse{
 		Username: user.Username,
 		Email:    user.Email,
-		Password: user.Password,
 		Token:    token,
+		Role:     user.Role,
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: loginResponse})

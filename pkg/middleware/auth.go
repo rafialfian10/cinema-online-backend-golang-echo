@@ -9,14 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Declare Result struct here ...
 type Result struct {
 	Status  int         `json:"status"`
 	Data    interface{} `json:"data"`
 	Message string      `json:"message"`
 }
 
-// Create Auth function here ...
+// function Auth berfungsi untuk validasi token(user baru dapat melakukan CRUD setelah memasukkan token)
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Request().Header.Get("Authorization")

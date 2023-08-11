@@ -4,6 +4,7 @@ type RegisterRequest struct {
 	Username string `json:"username" form:"username" validate:"required"`
 	Email    string `json:"email" form:"email" validate:"required"`
 	Password string `json:"password" form:"password" validate:"required"`
+	// VerificationToken string `json:"verification_token"`
 }
 
 type LoginRequest struct {
@@ -13,16 +14,18 @@ type LoginRequest struct {
 }
 
 type RegisterResponse struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	Username          string `json:"username"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	Role              string `json:"role"`
+	VerificationToken string `json:"verification_token"`
 }
 
 type LoginResponse struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
-	Password string `json:"password"`
 	Token    string `json:"token"`
+	Role     string `json:"role"`
 }
 
 type CheckAuth struct {
