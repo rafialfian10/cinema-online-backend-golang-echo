@@ -12,6 +12,8 @@ type MovieRepository interface {
 	CreateMovie(movie models.Movie) (models.Movie, error)
 	UpdateMovie(movie models.Movie) (models.Movie, error)
 	DeleteMovie(movie models.Movie, ID int) (models.Movie, error)
+	FindCategoriesById(categoriesId []int) ([]models.Category, error)
+	DeleteMovieCategoryByMovieId(movie models.Movie) (models.Movie, error)
 }
 
 type movieRepository struct {
@@ -49,6 +51,20 @@ func (r *movieRepository) UpdateMovie(movie models.Movie) (models.Movie, error) 
 
 func (r *movieRepository) DeleteMovie(movie models.Movie, ID int) (models.Movie, error) {
 	err := r.db.Raw("DELETE FROM movies WHERE id=?", ID).Scan(&movie).Error
+
+	return movie, err
+}
+
+func (r *movieRepository) FindCategoriesById(categoriesId []int) ([]models.Category, error) {
+	var categories []models.Category
+	err := r.db.Find(&categories, categoriesId).Error
+
+	return categories, err
+}
+
+func (r *movieRepository) DeleteMovieCategoryByMovieId(movie models.Movie) (models.Movie, error) {
+	r.db.Exec("DELETE FROM movie_categories WHERE movie_id=?", movie.ID)
+	err := r.db.Preload("User").Preload("Category").First(&movie, movie.ID).Error // add this code
 
 	return movie, err
 }
