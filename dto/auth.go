@@ -14,11 +14,11 @@ type LoginRequest struct {
 }
 
 type RegisterResponse struct {
-	Username          string `json:"username"`
-	Email             string `json:"email"`
-	Password          string `json:"password"`
-	Role              string `json:"role"`
-	VerificationToken string `json:"verification_token"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
+	// VerificationToken string `json:"verification_token"`
 }
 
 type LoginResponse struct {
