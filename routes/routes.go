@@ -6,4 +6,5 @@ func RouteInit(e *echo.Group) {
 	AuthRoutes(e)
 	UserRoutes(e)
 	MovieRoutes(e)
+	CategoryRoutes(e)
 }
