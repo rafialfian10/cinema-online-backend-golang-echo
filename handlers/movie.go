@@ -46,12 +46,7 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	categories, _ := h.MovieRepository.FindCategoriesById(movie.CategoryID)
-	movie.Category = categories
 	movie.Thumbnail = path_file + movie.Thumbnail
-
-	// fmt.Println("category", movie.Category)
-	// fmt.Println("category id", movie.CategoryID)
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
 

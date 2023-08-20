@@ -16,14 +16,15 @@ type Movie struct {
 }
 
 type MovieResponse struct {
-	ID          int        `json:"id" gorm:"primary_key:auto_increment"`
-	Title       string     `json:"title"`
-	Category    []Category `json:"category" gorm:"many2many:movie_categories"`
-	CategoryID  []int      `json:"category_id" form:"category_id" gorm:"-"`
-	Price       int        `json:"price"`
-	Link        string     `json:"link"`
-	Description string     `json:"description"`
-	Thumbnail   string     `json:"thumbnail"`
+	ID       int        `json:"id" gorm:"primary_key:auto_increment"`
+	Title    string     `json:"title"`
+	Category []Category `json:"category"`
+	// Category    []Category `json:"category" gorm:"many2many:movie_categories"`
+	CategoryID  []int  `json:"category_id" form:"category_id" gorm:"-"`
+	Price       int    `json:"price"`
+	Link        string `json:"link"`
+	Description string `json:"description"`
+	Thumbnail   string `json:"thumbnail"`
 }
 
 func (MovieResponse) TableName() string {
