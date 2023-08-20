@@ -18,4 +18,5 @@ func MovieRoutes(e *echo.Group) {
 	e.POST("/movie", middleware.UploadFile(h.CreateMovie))
 	e.PATCH("/movie/:id", middleware.UploadFile(h.UpdateMovie))
 	e.DELETE("/movie/:id", h.DeleteMovie)
+	e.DELETE("/movie/:id/thumbnail", h.DeleteThumbnail)
 }

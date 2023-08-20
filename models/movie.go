@@ -19,7 +19,7 @@ type MovieResponse struct {
 	ID          int        `json:"id" gorm:"primary_key:auto_increment"`
 	Title       string     `json:"title"`
 	Category    []Category `json:"category" gorm:"many2many:movie_categories"`
-	CategoryID  []int      `json:"-" form:"-" gorm:"-"`
+	CategoryID  []int      `json:"category_id" form:"category_id" gorm:"-"`
 	Price       int        `json:"price"`
 	Link        string     `json:"link"`
 	Description string     `json:"description"`

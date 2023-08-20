@@ -20,11 +20,17 @@ func HandlerMovie(MovieRepository repositories.MovieRepository) *handlerMovie {
 	return &handlerMovie{MovieRepository}
 }
 
+var path_file = "http://localhost:5000/uploads/"
+
 // function get all movie
 func (h *handlerMovie) FindMovies(c echo.Context) error {
 	movies, err := h.MovieRepository.FindMovies()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	for i, movie := range movies {
+		movies[i].Thumbnail = path_file + movie.Thumbnail
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: movies})
@@ -34,12 +40,21 @@ func (h *handlerMovie) FindMovies(c echo.Context) error {
 func (h *handlerMovie) GetMovie(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
+	var movie models.Movie
 	movie, err := h.MovieRepository.GetMovie(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
+	categories, _ := h.MovieRepository.FindCategoriesById(movie.CategoryID)
+	movie.Category = categories
+	movie.Thumbnail = path_file + movie.Thumbnail
+
+	// fmt.Println("category", movie.Category)
+	// fmt.Println("category id", movie.CategoryID)
+
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+
 }
 
 // function create user
@@ -199,6 +214,24 @@ func (h *handlerMovie) DeleteMovie(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(data)})
+}
+
+// function delete thumbnail by id movie
+func (h *handlerMovie) DeleteThumbnail(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	// Delete the thumbnail using repository function
+	if err := h.MovieRepository.DeleteThumbnailByID(id); err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	// Get the updated movie data after deleting thumbnail
+	movie, err := h.MovieRepository.GetMovie(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
 }
 
 // function convert movie response

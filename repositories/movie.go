@@ -14,6 +14,7 @@ type MovieRepository interface {
 	DeleteMovie(movie models.Movie, ID int) (models.Movie, error)
 	FindCategoriesById(categoriesId []int) ([]models.Category, error)
 	DeleteMovieCategoryByMovieId(movie models.Movie) (models.Movie, error)
+	DeleteThumbnailByID(ID int) error
 }
 
 type movieRepository struct {
@@ -67,4 +68,8 @@ func (r *movieRepository) DeleteMovieCategoryByMovieId(movie models.Movie) (mode
 	err := r.db.Preload("User").Preload("Category").First(&movie, movie.ID).Error // add this code
 
 	return movie, err
+}
+
+func (r *movieRepository) DeleteThumbnailByID(ID int) error {
+	return r.db.Model(&models.Movie{}).Where("id = ?", ID).UpdateColumn("thumbnail", gorm.Expr("NULL")).Error
 }
