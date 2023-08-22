@@ -46,7 +46,9 @@ func (r *movieRepository) CreateMovie(movie models.Movie) (models.Movie, error) 
 }
 
 func (r *movieRepository) UpdateMovie(movie models.Movie) (models.Movie, error) {
-	err := r.db.Debug().Model(&movie).Updates(movie).Error
+	r.db.Exec("DELETE FROM movie_categories WHERE movie_id=?", movie.ID)
+	err := r.db.Updates(&movie).Error
+
 	return movie, err
 }
 
@@ -65,7 +67,7 @@ func (r *movieRepository) FindCategoriesById(categoriesId []int) ([]models.Categ
 
 func (r *movieRepository) DeleteMovieCategoryByMovieId(movie models.Movie) (models.Movie, error) {
 	r.db.Exec("DELETE FROM movie_categories WHERE movie_id=?", movie.ID)
-	err := r.db.Preload("User").Preload("Category").First(&movie, movie.ID).Error // add this code
+	err := r.db.Preload("Category").First(&movie, movie.ID).Error
 
 	return movie, err
 }
