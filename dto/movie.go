@@ -15,6 +15,6 @@ type UpdateMovieRequest struct {
 	Price       int    `json:"price" form:"price"`
 	Link        string `json:"link" form:"link"`
 	Description string `json:"description" form:"description"`
-	// Thumbnail   string `json:"thumbnail" form:"thumbnail"`
-	Thumbnail string `json:"thumbnail,omitempty" form:"thumbnail" gorm:"type: varchar(255)"`
+	Thumbnail   string `json:"thumbnail" form:"thumbnail"`
+	// Thumbnail string `json:"thumbnail,omitempty" form:"thumbnail" gorm:"type: varchar(255)"`
 }

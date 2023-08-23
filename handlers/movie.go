@@ -158,6 +158,18 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		movie.Title = request.Title
 	}
 
+	if len(request.CategoryID) == 0 {
+		data, err := h.MovieRepository.DeleteMovieCategoryByMovieId(movie)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+		}
+
+		return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
+	}
+
+	categories, _ := h.MovieRepository.FindCategoriesById(request.CategoryID)
+	movie.Category = categories
+
 	if request.Price != 0 {
 		movie.Price = request.Price
 	}
@@ -170,23 +182,16 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		movie.Description = request.Description
 	}
 
+	var newThumbnail string
 	if request.Thumbnail != "" {
-		movie.Thumbnail = request.Thumbnail
+		newThumbnail = request.Thumbnail
 	} else {
-		movie.Thumbnail = movie.Thumbnail
+		newThumbnail = movie.Thumbnail
 	}
 
-	if len(request.CategoryID) == 0 {
-		data, err := h.MovieRepository.DeleteMovieCategoryByMovieId(movie)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
-		}
-
-		return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
+	if newThumbnail != "" {
+		movie.Thumbnail = newThumbnail
 	}
-
-	categories, _ := h.MovieRepository.FindCategoriesById(request.CategoryID)
-	movie.Category = categories
 
 	data, err := h.MovieRepository.UpdateMovie(movie)
 	if err != nil {
