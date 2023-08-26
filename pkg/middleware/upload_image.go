@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadFile(next echo.HandlerFunc) echo.HandlerFunc {
+func UploadImage(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		file, err := c.FormFile("thumbnail")
 
@@ -23,7 +24,7 @@ func UploadFile(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 			defer src.Close()
 
-			tempFile, err := ioutil.TempFile("uploads", "image-*.png")
+			tempFile, err := ioutil.TempFile("uploads/thumbnail", "image-*.png")
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, err)
 			}
@@ -34,13 +35,14 @@ func UploadFile(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 
 			data := tempFile.Name()
-			filename := data[8:] // split uploads/
+			filename := data[18:] // split uploads/
+			fmt.Println("thumbnail", filename)
 
-			c.Set("dataFile", filename)
+			c.Set("dataImage", filename)
 			return next(c)
 		}
 
-		c.Set("dataFile", "")
+		c.Set("dataImage", "")
 		return next(c)
 	}
 }

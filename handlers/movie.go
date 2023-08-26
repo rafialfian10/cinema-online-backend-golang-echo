@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -20,7 +21,8 @@ func HandlerMovie(MovieRepository repositories.MovieRepository) *handlerMovie {
 	return &handlerMovie{MovieRepository}
 }
 
-var path_file = "http://localhost:5000/uploads/"
+var path_thumbnail = "http://localhost:5000/uploads/thumbnail/"
+var path_trailer = "http://localhost:5000/uploads/trailer/"
 
 // function get all movie
 func (h *handlerMovie) FindMovies(c echo.Context) error {
@@ -30,7 +32,8 @@ func (h *handlerMovie) FindMovies(c echo.Context) error {
 	}
 
 	for i, movie := range movies {
-		movies[i].Thumbnail = path_file + movie.Thumbnail
+		movies[i].Thumbnail = path_thumbnail + movie.Thumbnail
+		movies[i].Trailer = path_trailer + movie.Trailer
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: movies})
@@ -46,7 +49,8 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	movie.Thumbnail = path_file + movie.Thumbnail
+	movie.Thumbnail = path_thumbnail + movie.Thumbnail
+	movie.Trailer = path_trailer + movie.Trailer
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
 
@@ -55,8 +59,10 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 // function create user
 func (h *handlerMovie) CreateMovie(c echo.Context) error {
 	var err error
-	dataFile := c.Get("dataFile").(string)
-	// fmt.Println("this is data file", dataFile)
+	dataImage := c.Get("dataImage").(string)
+	dataVideo := c.Get("dataVideo").(string)
+	// fmt.Println("this is data file", dataImage)
+	// fmt.Println("this is data file", dataVideo)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	categoryIdString := c.FormValue("category_id")
@@ -77,11 +83,13 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 
 	request := dto.CreateMovieRequest{
 		Title:       c.FormValue("title"),
+		ReleaseDate: c.FormValue("release_date"),
 		CategoryID:  categoriesId,
 		Price:       price,
 		Link:        c.FormValue("link"),
 		Description: c.FormValue("description"),
-		Thumbnail:   dataFile,
+		Thumbnail:   dataImage,
+		Trailer:     dataVideo,
 	}
 
 	validation := validator.New()
@@ -92,16 +100,18 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 
 	// userLogin := c.Get("userLogin")
 	// userId := userLogin.(jwt.MapClaims)["id"].(float64)
-
+	ReleaseDate, _ := time.Parse("2006-01-02", c.FormValue("release_date"))
 	categories, _ := h.MovieRepository.FindCategoriesById(request.CategoryID)
 
 	movie := models.Movie{
 		Title:       request.Title,
+		ReleaseDate: ReleaseDate,
 		Category:    categories,
 		Price:       request.Price,
 		Link:        request.Link,
 		Description: request.Description,
 		Thumbnail:   request.Thumbnail,
+		Trailer:     request.Trailer,
 		// UserID:      int(userId),
 	}
 
@@ -118,7 +128,8 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 // function update movie
 func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 	var err error
-	dataFile := c.Get("dataFile").(string)
+	dataImage := c.Get("dataImage").(string)
+	dataVideo := c.Get("dataVideo").(string)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 
@@ -135,11 +146,13 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 
 	request := dto.UpdateMovieRequest{
 		Title:       c.FormValue("title"),
+		ReleaseDate: c.FormValue("release_date"),
 		CategoryID:  categoriesId,
 		Price:       price,
 		Link:        c.FormValue("link"),
 		Description: c.FormValue("description"),
-		Thumbnail:   dataFile,
+		Thumbnail:   dataImage,
+		Trailer:     dataVideo,
 	}
 
 	validation := validator.New()
@@ -156,6 +169,12 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 
 	if request.Title != "" {
 		movie.Title = request.Title
+	}
+
+	date, _ := time.Parse("2006-01-02", request.ReleaseDate)
+	time := time.Now()
+	if date != time {
+		movie.ReleaseDate = date
 	}
 
 	if len(request.CategoryID) == 0 {
@@ -182,15 +201,12 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		movie.Description = request.Description
 	}
 
-	var newThumbnail string
 	if request.Thumbnail != "" {
-		newThumbnail = request.Thumbnail
-	} else {
-		newThumbnail = movie.Thumbnail
+		movie.Thumbnail = request.Thumbnail
 	}
 
-	if newThumbnail != "" {
-		movie.Thumbnail = newThumbnail
+	if request.Trailer != "" {
+		movie.Trailer = request.Trailer
 	}
 
 	data, err := h.MovieRepository.UpdateMovie(movie)
@@ -236,15 +252,35 @@ func (h *handlerMovie) DeleteThumbnail(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
 }
 
+// function delete thumbnail by id movie
+func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	// Delete the thumbnail using repository function
+	if err := h.MovieRepository.DeleteTrailerByID(id); err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	// Get the updated movie data after deleting trailer
+	movie, err := h.MovieRepository.GetMovie(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+}
+
 // function convert movie response
 func convertMovieResponse(movie models.Movie) models.MovieResponse {
 	return models.MovieResponse{
 		ID:          movie.ID,
 		Title:       movie.Title,
+		ReleaseDate: movie.ReleaseDate,
 		Category:    movie.Category,
 		Price:       movie.Price,
 		Link:        movie.Link,
 		Description: movie.Description,
 		Thumbnail:   movie.Thumbnail,
+		Trailer:     movie.Trailer,
 	}
 }
