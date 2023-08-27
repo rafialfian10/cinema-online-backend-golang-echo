@@ -13,6 +13,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var path_thumbnail = "http://localhost:5000/uploads/thumbnail/"
+var path_trailer = "http://localhost:5000/uploads/trailer/"
+
 type handlerMovie struct {
 	MovieRepository repositories.MovieRepository
 }
@@ -20,9 +23,6 @@ type handlerMovie struct {
 func HandlerMovie(MovieRepository repositories.MovieRepository) *handlerMovie {
 	return &handlerMovie{MovieRepository}
 }
-
-var path_thumbnail = "http://localhost:5000/uploads/thumbnail/"
-var path_trailer = "http://localhost:5000/uploads/trailer/"
 
 // function get all movie
 func (h *handlerMovie) FindMovies(c echo.Context) error {
@@ -59,10 +59,10 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 // function create user
 func (h *handlerMovie) CreateMovie(c echo.Context) error {
 	var err error
-	dataImage := c.Get("dataImage").(string)
-	dataVideo := c.Get("dataVideo").(string)
-	// fmt.Println("this is data file", dataImage)
-	// fmt.Println("this is data file", dataVideo)
+	dataThumbnail := c.Get("dataThumbnail").(string)
+	dataTrailer := c.Get("dataTrailer").(string)
+	// fmt.Println("this is data file", dataThumbnail)
+	// fmt.Println("this is data file", dataTrailer)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	categoryIdString := c.FormValue("category_id")
@@ -88,8 +88,8 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 		Price:       price,
 		Link:        c.FormValue("link"),
 		Description: c.FormValue("description"),
-		Thumbnail:   dataImage,
-		Trailer:     dataVideo,
+		Thumbnail:   dataThumbnail,
+		Trailer:     dataTrailer,
 	}
 
 	validation := validator.New()
@@ -128,8 +128,8 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 // function update movie
 func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 	var err error
-	dataImage := c.Get("dataImage").(string)
-	dataVideo := c.Get("dataVideo").(string)
+	dataThumbnail := c.Get("dataThumbnail").(string)
+	dataTrailer := c.Get("dataTrailer").(string)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 
@@ -151,8 +151,8 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		Price:       price,
 		Link:        c.FormValue("link"),
 		Description: c.FormValue("description"),
-		Thumbnail:   dataImage,
-		Trailer:     dataVideo,
+		Thumbnail:   dataThumbnail,
+		Trailer:     dataTrailer,
 	}
 
 	validation := validator.New()

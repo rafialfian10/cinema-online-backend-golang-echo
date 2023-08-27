@@ -8,9 +8,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadVideo(next echo.HandlerFunc) echo.HandlerFunc {
+func UploadThumbnail(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		file, err := c.FormFile("trailer")
+		file, err := c.FormFile("thumbnail")
 
 		if file != nil {
 			if err != nil {
@@ -23,7 +23,7 @@ func UploadVideo(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 			defer src.Close()
 
-			tempFile, err := ioutil.TempFile("uploads/trailer", "video-*.mp4")
+			tempFile, err := ioutil.TempFile("uploads/thumbnail", "image-*.png")
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, err)
 			}
@@ -34,13 +34,14 @@ func UploadVideo(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 
 			data := tempFile.Name()
-			filename := data[16:] // split uploads/
+			filename := data[18:] // split uploads/
+			// fmt.Println("thumbnail", filename)
 
-			c.Set("dataVideo", filename)
+			c.Set("dataThumbnail", filename)
 			return next(c)
 		}
 
-		c.Set("dataVideo", "")
+		c.Set("dataThumbnail", "")
 		return next(c)
 	}
 }

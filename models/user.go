@@ -10,7 +10,7 @@ type User struct {
 	Gender   string `json:"gender" gorm:"type: varchar(255)"`
 	Phone    string `json:"phone" gorm:"type: varchar(255)"`
 	Address  string `json:"address" gorm:"type: text"`
-	Photo    string `json:"Photo" gorm:"type: varchar(255)"`
+	Photo    string `json:"photo" gorm:"type: varchar(255)"`
 	Role     string `json:"role" gorm:"type: varchar(255)"`
 	// VerificationToken string `json:"verification_token" gorm:"type: varchar(255)"`
 	// Verified          bool
@@ -19,14 +19,14 @@ type User struct {
 }
 
 type UserResponse struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
+	ID       int    `json:"id"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Gender   string `json:"gender"`
 	Phone    string `json:"phone"`
 	Address  string `json:"address"`
-	Photo    string `json:"Photo"`
+	Photo    string `json:"photo"`
 }
 
 func (UserResponse) TableName() string {
