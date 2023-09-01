@@ -17,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var path_photo_auth = "http://localhost:5000/uploads/photo/"
+
 // Handle struct
 type handlerAuth struct {
 	AuthRepository repositories.AuthRepository
@@ -140,11 +142,13 @@ func (h *handlerAuth) Login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
+	user.Photo = path_photo_auth + user.Photo
+
 	loginResponse := dto.LoginResponse{
 		Username: user.Username,
 		Email:    user.Email,
-		Token:    token,
 		Role:     user.Role,
+		Token:    token,
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: loginResponse})
@@ -152,24 +156,34 @@ func (h *handlerAuth) Login(c echo.Context) error {
 
 // function check auth
 func (h *handlerAuth) CheckAuth(c echo.Context) error {
-	userInfo := c.Get("userInfo").(*jwt.Token)
-	claims := userInfo.Claims.(jwt.MapClaims)
-	userId := int(claims["id"].(float64))
+	userLogin := c.Get("userLogin")
+	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
-	// Check User by Id
-	user, err := h.AuthRepository.Getuser(userId)
-	if err != nil {
-		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
-		return c.JSON(http.StatusBadRequest, response)
-	}
+	user, _ := h.AuthRepository.CheckAuth(int(userId))
 
-	CheckAuthResponse := dto.CheckAuth{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Role:     user.Role,
-	}
-
-	response := dto.SuccessResult{Status: http.StatusOK, Data: CheckAuthResponse}
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: user})
 }
+
+// function check auth
+// func (h *handlerAuth) CheckAuth(c echo.Context) error {
+// 	userInfo := c.Get("userInfo").(*jwt.Token)
+// 	claims := userInfo.Claims.(jwt.MapClaims)
+// 	userId := int(claims["id"].(float64))
+
+// 	// Check user by Id
+// 	user, err := h.AuthRepository.Getuser(userId)
+// 	if err != nil {
+// 		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+// 		return c.JSON(http.StatusBadRequest, response)
+// 	}
+
+// 	CheckAuthResponse := dto.CheckAuth{
+// 		ID:       user.ID,
+// 		Username: user.Username,
+// 		Email:    user.Email,
+// 		Role:     user.Role,
+// 	}
+
+// 	response := dto.SuccessResult{Status: http.StatusOK, Data: CheckAuthResponse}
+// 	return c.JSON(http.StatusOK, response)
+// }

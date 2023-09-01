@@ -10,6 +10,7 @@ type AuthRepository interface {
 	Register(user models.User) (models.User, error)
 	FindUserByUsernameOrEmail(username, email string) (models.User, error)
 	Login(email string) (models.User, error)
+	CheckAuth(ID int) (models.User, error)
 	Getuser(ID int) (models.User, error)
 }
 
@@ -43,6 +44,13 @@ func (r *authRepository) Login(email string) (models.User, error) {
 
 	// ambil data user yang email user == request email
 	err := r.db.First(&user, "email=?", email).Error
+
+	return user, err
+}
+
+func (r *authRepository) CheckAuth(ID int) (models.User, error) {
+	var user models.User
+	err := r.db.Preload("movies").First(&user, ID).Error
 
 	return user, err
 }

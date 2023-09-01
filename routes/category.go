@@ -2,6 +2,7 @@ package routes
 
 import (
 	"cinemaonline/handlers"
+	"cinemaonline/pkg/middleware"
 	"cinemaonline/pkg/mysql"
 	"cinemaonline/repositories"
 
@@ -14,7 +15,7 @@ func CategoryRoutes(e *echo.Group) {
 
 	e.GET("/categories", h.FindCategories)
 	e.GET("/category/:id", h.GetCategory)
-	e.POST("/category", h.CreateCategory)
-	e.DELETE("/category/:id", h.DeleteCategory)
-	e.PATCH("/category/:id", h.UpdateCategory)
+	e.POST("/category", middleware.Auth(h.CreateCategory))
+	e.DELETE("/category/:id", middleware.Auth(h.DeleteCategory))
+	e.PATCH("/category/:id", middleware.Auth(h.UpdateCategory))
 }
