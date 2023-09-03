@@ -12,6 +12,7 @@ type UserRepository interface {
 	CreateUser(user models.User) (models.User, error)
 	UpdateUser(user models.User) (models.User, error)
 	DeleteUser(user models.User, ID int) (models.User, error)
+	GetProfile(userId int) (models.User, error)
 }
 
 type userRepository struct {
@@ -51,4 +52,11 @@ func (r *userRepository) DeleteUser(user models.User, ID int) (models.User, erro
 	err := r.db.Raw("DELETE FROM users WHERE id=?", ID).Scan(&user).Error
 
 	return user, err
+}
+
+func (r *userRepository) GetProfile(userId int) (models.User, error) {
+	var profile models.User
+	err := r.db.First(&profile, userId).Error
+
+	return profile, err
 }

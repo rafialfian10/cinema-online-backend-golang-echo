@@ -8,21 +8,22 @@ import (
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
 var path_photo = "http://localhost:5000/uploads/photo/"
 
-type handler struct {
+type handlerUser struct {
 	UserRepository repositories.UserRepository
 }
 
-func HandlerUser(UserRepository repositories.UserRepository) *handler {
-	return &handler{UserRepository}
+func HandlerUser(UserRepository repositories.UserRepository) *handlerUser {
+	return &handlerUser{UserRepository}
 }
 
 // function get all user
-func (h *handler) FindUsers(c echo.Context) error {
+func (h *handlerUser) FindUsers(c echo.Context) error {
 	users, err := h.UserRepository.FindUsers()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
@@ -36,7 +37,7 @@ func (h *handler) FindUsers(c echo.Context) error {
 }
 
 // function get user by id
-func (h *handler) GetUser(c echo.Context) error {
+func (h *handlerUser) GetUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	var user models.User
@@ -51,7 +52,7 @@ func (h *handler) GetUser(c echo.Context) error {
 }
 
 // function create user
-func (h *handler) CreateUser(c echo.Context) error {
+func (h *handlerUser) CreateUser(c echo.Context) error {
 	request := new(dto.CreateUserRequest)
 	if err := c.Bind(request); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
@@ -78,7 +79,7 @@ func (h *handler) CreateUser(c echo.Context) error {
 }
 
 // function update user
-func (h *handler) UpdateUser(c echo.Context) error {
+func (h *handlerUser) UpdateUser(c echo.Context) error {
 	var err error
 	dataPhoto := c.Get("dataPhoto").(string)
 
@@ -145,7 +146,7 @@ func (h *handler) UpdateUser(c echo.Context) error {
 }
 
 // function delete user
-func (h *handler) DeleteUser(c echo.Context) error {
+func (h *handlerUser) DeleteUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	user, err := h.UserRepository.GetUser(id)
@@ -159,6 +160,20 @@ func (h *handler) DeleteUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(data)})
+}
+
+// function get profile after with jwt
+func (h *handlerUser) GetProfile(c echo.Context) error {
+	userId := c.Get("userLogin").(jwt.MapClaims)["id"].(float64)
+
+	var profile models.User
+	profile, err := h.UserRepository.GetProfile(int(userId))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	profile.Photo = path_photo + profile.Photo
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(profile)})
 }
 
 func convertResponse(user models.User) models.UserResponse {
