@@ -161,6 +161,8 @@ func (h *handlerAuth) CheckAuth(c echo.Context) error {
 
 	user, _ := h.AuthRepository.CheckAuth(int(userId))
 
+	user.Photo = path_photo_auth + user.Photo
+
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: user})
 }
 

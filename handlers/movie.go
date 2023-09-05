@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -98,8 +99,9 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	// userLogin := c.Get("userLogin")
-	// userId := userLogin.(jwt.MapClaims)["id"].(float64)
+	userLogin := c.Get("userLogin")
+	userId := userLogin.(jwt.MapClaims)["id"].(float64)
+
 	ReleaseDate, _ := time.Parse("2006-01-02", c.FormValue("release_date"))
 	categories, _ := h.MovieRepository.FindCategoriesById(request.CategoryID)
 
@@ -112,7 +114,7 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 		Description: request.Description,
 		Thumbnail:   request.Thumbnail,
 		Trailer:     request.Trailer,
-		// UserID:      int(userId),
+		UserID:      int(userId),
 	}
 
 	movie, err = h.MovieRepository.CreateMovie(movie)
@@ -282,5 +284,7 @@ func convertMovieResponse(movie models.Movie) models.MovieResponse {
 		Description: movie.Description,
 		Thumbnail:   movie.Thumbnail,
 		Trailer:     movie.Trailer,
+		UserID:      movie.UserID,
+		User:        movie.User,
 	}
 }
