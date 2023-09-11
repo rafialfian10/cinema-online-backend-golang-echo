@@ -50,7 +50,7 @@ func (r *authRepository) Login(email string) (models.User, error) {
 
 func (r *authRepository) CheckAuth(ID int) (models.User, error) {
 	var user models.User
-	err := r.db.Preload("movies").First(&user, ID).Error
+	err := r.db.First(&user, ID).Error
 
 	return user, err
 }

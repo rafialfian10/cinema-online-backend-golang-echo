@@ -274,17 +274,25 @@ func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
 
 // function convert movie response
 func convertMovieResponse(movie models.Movie) models.MovieResponse {
-	return models.MovieResponse{
-		ID:          movie.ID,
-		Title:       movie.Title,
-		ReleaseDate: movie.ReleaseDate,
-		Category:    movie.Category,
-		Price:       movie.Price,
-		Link:        movie.Link,
-		Description: movie.Description,
-		Thumbnail:   movie.Thumbnail,
-		Trailer:     movie.Trailer,
-		UserID:      movie.UserID,
-		User:        movie.User,
+	var result models.MovieResponse
+	result.ID = movie.ID
+	result.Title = movie.Title
+	result.ReleaseDate = movie.ReleaseDate
+	result.Price = movie.Price
+	result.Link = movie.Link
+	result.Description = movie.Description
+	result.Thumbnail = movie.Thumbnail
+	result.Trailer = movie.Trailer
+	result.UserID = movie.UserID
+	result.User = movie.User
+
+	for _, cat := range movie.Category {
+		categoryResponse := models.CategoryResponse{
+			ID:   cat.ID,
+			Name: cat.Name,
+		}
+		result.Category = append(result.Category, categoryResponse)
 	}
+
+	return result
 }

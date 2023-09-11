@@ -12,6 +12,7 @@ func RunMigration() {
 		&models.Movie{},
 		&models.Category{},
 		&models.Transaction{},
+		&models.Premium{},
 	)
 
 	if err != nil {
