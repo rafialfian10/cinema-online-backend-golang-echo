@@ -11,7 +11,8 @@ type AuthRepository interface {
 	FindUserByUsernameOrEmail(username, email string) (models.User, error)
 	Login(email string) (models.User, error)
 	CheckAuth(ID int) (models.User, error)
-	Getuser(ID int) (models.User, error)
+	CreateUserPremi(premi models.Premi) (models.Premi, error)
+	GetPremi(Id int) (models.Premi, error)
 }
 
 type authRepository struct {
@@ -25,7 +26,7 @@ func RepositoryAuth(db *gorm.DB) *authRepository {
 
 // function register
 func (r *authRepository) Register(user models.User) (models.User, error) {
-	err := r.db.Create(&user).Error
+	err := r.db.Preload("Premi").Create(&user).Error
 
 	return user, err
 }
@@ -55,10 +56,15 @@ func (r *authRepository) CheckAuth(ID int) (models.User, error) {
 	return user, err
 }
 
-// function get user id
-func (r *authRepository) Getuser(ID int) (models.User, error) {
-	var user models.User
-	err := r.db.First(&user, ID).Error
+func (r *authRepository) CreateUserPremi(premi models.Premi) (models.Premi, error) {
+	err := r.db.Create(&premi).Error
 
-	return user, err
+	return premi, err
+}
+
+func (r *authRepository) GetPremi(Id int) (models.Premi, error) {
+	var premi models.Premi
+	err := r.db.First(&premi, "id = ?", Id).Error
+
+	return premi, err
 }

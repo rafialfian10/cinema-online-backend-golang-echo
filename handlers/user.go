@@ -186,5 +186,12 @@ func convertResponse(user models.User) models.UserResponse {
 		Phone:    user.Phone,
 		Address:  user.Address,
 		Photo:    user.Photo,
+		Premi: models.PremiResponse{
+			ID:     user.Premi.ID,
+			Status: user.Premi.Status,
+			Price:  user.Premi.Price,
+			Token:  user.Premi.Token,
+			UserID: user.Premi.UserID,
+		},
 	}
 }

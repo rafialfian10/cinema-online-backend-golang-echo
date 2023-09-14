@@ -25,14 +25,14 @@ func RepositoryUser(db *gorm.DB) *userRepository {
 
 func (r *userRepository) FindUsers() ([]models.User, error) {
 	var users []models.User
-	err := r.db.Find(&users).Error
+	err := r.db.Preload("Premi").Find(&users).Error
 
 	return users, err
 }
 
 func (r *userRepository) GetUser(ID int) (models.User, error) {
 	var user models.User
-	err := r.db.First(&user, ID).Error
+	err := r.db.Preload("Premi").First(&user, ID).Error
 
 	return user, err
 }
@@ -56,7 +56,7 @@ func (r *userRepository) DeleteUser(user models.User, ID int) (models.User, erro
 
 func (r *userRepository) GetProfile(userId int) (models.User, error) {
 	var profile models.User
-	err := r.db.First(&profile, userId).Error
+	err := r.db.Preload("Premi").First(&profile, userId).Error
 
 	return profile, err
 }

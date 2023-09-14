@@ -8,5 +8,5 @@ func RouteInit(e *echo.Group) {
 	MovieRoutes(e)
 	CategoryRoutes(e)
 	TransactionRoutes(e)
-	PremiumRoutes(e)
+	PremiRoutes(e)
 }

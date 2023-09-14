@@ -71,6 +71,21 @@ func (h *handlerAuth) Register(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
+	// Create Premium
+	premium := models.Premi{
+		Status: false,
+		UserID: data.ID,
+	}
+
+	premium, err = h.AuthRepository.CreateUserPremi(premium)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	premium, _ = h.AuthRepository.GetPremi(premium.ID)
+
+	data.Premi = premium
+
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
@@ -134,7 +149,7 @@ func (h *handlerAuth) Login(c echo.Context) error {
 	//generate token
 	claims := jwt.MapClaims{}
 	claims["id"] = user.ID
-	claims["exp"] = time.Now().Add(time.Hour * 2).Unix() // 2 hours expired
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // 2 hours expired
 
 	token, errGenerateToken := jwtToken.GenerateToken(&claims)
 	if errGenerateToken != nil {
