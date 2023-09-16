@@ -48,7 +48,7 @@ func (h *handlerUser) GetUser(c echo.Context) error {
 
 	user.Photo = path_photo + user.Photo
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(user)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(user)})
 }
 
 // function create user
@@ -75,7 +75,7 @@ func (h *handlerUser) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(data)})
 }
 
 // function update user
@@ -142,7 +142,7 @@ func (h *handlerUser) UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(data)})
 }
 
 // function delete user
@@ -159,7 +159,7 @@ func (h *handlerUser) DeleteUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(data)})
 }
 
 // function get profile after with jwt
@@ -173,10 +173,10 @@ func (h *handlerUser) GetProfile(c echo.Context) error {
 	}
 
 	profile.Photo = path_photo + profile.Photo
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertResponse(profile)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(profile)})
 }
 
-func convertResponse(user models.User) models.UserResponse {
+func ConvertUserResponse(user models.User) models.UserResponse {
 	return models.UserResponse{
 		ID:       user.ID,
 		Username: user.Username,
@@ -187,11 +187,14 @@ func convertResponse(user models.User) models.UserResponse {
 		Address:  user.Address,
 		Photo:    user.Photo,
 		Premi: models.PremiResponse{
-			ID:     user.Premi.ID,
-			Status: user.Premi.Status,
-			Price:  user.Premi.Price,
-			Token:  user.Premi.Token,
-			UserID: user.Premi.UserID,
+			ID:          user.Premi.ID,
+			OrderID:     user.Premi.OrderID,
+			Status:      user.Premi.Status,
+			Price:       user.Premi.Price,
+			Token:       user.Premi.Token,
+			UserID:      user.Premi.UserID,
+			ActivatedAt: user.Premi.ActivatedAt,
+			ExpiredAt:   user.Premi.ExpiredAt,
 		},
 	}
 }

@@ -178,7 +178,30 @@ func (h *handlerAuth) CheckAuth(c echo.Context) error {
 
 	user.Photo = path_photo_auth + user.Photo
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: user})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertAuthResponse(user)})
+}
+
+func ConvertAuthResponse(user models.User) models.UserResponse {
+	return models.UserResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Password: user.Password,
+		Gender:   user.Gender,
+		Phone:    user.Phone,
+		Address:  user.Address,
+		Photo:    user.Photo,
+		Premi: models.PremiResponse{
+			ID:          user.Premi.ID,
+			OrderID:     user.Premi.OrderID,
+			Status:      user.Premi.Status,
+			Price:       user.Premi.Price,
+			Token:       user.Premi.Token,
+			UserID:      user.Premi.UserID,
+			ActivatedAt: user.Premi.ActivatedAt,
+			ExpiredAt:   user.Premi.ExpiredAt,
+		},
+	}
 }
 
 // function check auth
