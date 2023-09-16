@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
@@ -50,16 +50,12 @@ func (h *handlerPremi) GetPremi(c echo.Context) error {
 }
 
 // function update premium
-func (h *handlerPremi) UpdatePremium(c echo.Context) error {
-	userLogin := c.Get("userLogin")
-	userId := int(userLogin.(jwt.MapClaims)["id"].(float64))
-
+func (h *handlerPremi) UpdatePremiumByUser(c echo.Context) error {
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	statusForm := c.FormValue("status")
 	status, _ := strconv.ParseBool(statusForm)
 
 	request := dto.UpdatePremiRequest{
-		UserID: userId,
 		Status: status,
 		Price:  price,
 	}
@@ -72,9 +68,20 @@ func (h *handlerPremi) UpdatePremium(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	premi, err := h.PremiRepository.GetPremi(id)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, dto.ErrorResult{Status: http.StatusNotFound, Message: "Transaksi tidak ditemukan"})
+		return c.JSON(http.StatusNotFound, dto.ErrorResult{Status: http.StatusNotFound, Message: "Transaction not found"})
 	}
 
+	var transactionIsMatch = false
+	var transactionId int
+	for !transactionIsMatch {
+		transactionId = int(time.Now().Unix())
+		transactionData, _ := h.PremiRepository.GetPremi(transactionId)
+		if transactionData.ID == 0 {
+			transactionIsMatch = true
+		}
+	}
+
+	premi.OrderID = transactionId
 	premi.Price = request.Price
 	premi.Status = request.Status
 
@@ -84,18 +91,24 @@ func (h *handlerPremi) UpdatePremium(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
+	// Mengupdate data premi dengan perubahan ActivatedAt dan ExpiredAt
+	_, err = h.PremiRepository.UpdatePremiUser(premiUpdated, premiUpdated.ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
 	// Mengambil data premi yang baru diupdate
 	getPremiUpdated, _ := h.PremiRepository.GetPremi(premiUpdated.ID)
 
 	// 1. Initiate Snap client
 	var s = snap.Client{}
-	s.New(os.Getenv("SERVER_KEY_TRANSACTION"), midtrans.Sandbox)
+	s.New(os.Getenv("SERVER_KEY_PREMIUM"), midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  strconv.Itoa(premiUpdated.ID),
+			OrderID:  strconv.Itoa(premiUpdated.OrderID),
 			GrossAmt: int64(premiUpdated.Price),
 		},
 		CreditCard: &snap.CreditCardDetails{
@@ -187,7 +200,7 @@ func (h *handlerPremi) NotificationPremi(c echo.Context) error {
 	orderId := notificationPayload["order_id"].(string)
 	order_id, _ := strconv.Atoi(orderId)
 
-	premi, err := h.PremiRepository.GetPremi(order_id)
+	premi, err := h.PremiRepository.GetPremiOrderId(order_id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: "Transaksi tidak ditemukan"})
 	}
@@ -199,7 +212,7 @@ func (h *handlerPremi) NotificationPremi(c echo.Context) error {
 			SendMailPremi("Transaction Success", premi)
 		} else if fraudStatus == "challenge" {
 			// Transaksi dalam tantangan fraud
-			h.PremiRepository.DeletePremi(premi, premi.ID)
+			h.PremiRepository.UpdatePremiUserStatus(premi.Status, premi.ID)
 		}
 	} else if transactionStatus == "settlement" {
 		premi.Status = true
@@ -207,15 +220,15 @@ func (h *handlerPremi) NotificationPremi(c echo.Context) error {
 		SendMailPremi("Transaksi Success", premi)
 	} else if transactionStatus == "deny" {
 		// Pembayaran ditolak
-		h.PremiRepository.DeletePremi(premi, premi.ID)
+		h.PremiRepository.UpdatePremiUserStatus(premi.Status, premi.ID)
 		SendMailPremi("Transaction Failed", premi)
 	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
 		// Pembayaran dibatalkan atau kadaluwarsa
-		h.PremiRepository.DeletePremi(premi, premi.ID)
+		h.PremiRepository.UpdatePremiUserStatus(premi.Status, premi.ID)
 		SendMailPremi("Transaction Canceled / Expired", premi)
 	} else if transactionStatus == "pending" {
 		// Transaksi masih dalam status pending
-		h.PremiRepository.DeletePremi(premi, premi.ID)
+		h.PremiRepository.UpdatePremiUserStatus(premi.Status, premi.ID)
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: notificationPayload})
@@ -280,10 +293,13 @@ func SendMailPremi(status string, premi models.Premi) {
 // function convert premium
 func ConvertPremiResponse(premi models.Premi) models.PremiResponse {
 	return models.PremiResponse{
-		ID:     premi.ID,
-		Status: premi.Status,
-		Price:  premi.Price,
-		Token:  premi.Token,
-		UserID: premi.UserID,
+		ID:          premi.ID,
+		OrderID:     premi.OrderID,
+		Status:      premi.Status,
+		Price:       premi.Price,
+		Token:       premi.Token,
+		UserID:      premi.UserID,
+		ActivatedAt: premi.ActivatedAt,
+		ExpiredAt:   premi.ExpiredAt,
 	}
 }

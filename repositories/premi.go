@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"cinemaonline/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -9,11 +10,11 @@ import (
 type PremiRepository interface {
 	FindPremis() ([]models.Premi, error)
 	GetPremi(Id int) (models.Premi, error)
+	GetPremiOrderId(orderId int) (models.Premi, error)
 	UpdatePremiUserStatus(status bool, orderId int) (models.Premi, error)
 	UpdatePremiUser(premi models.Premi, userId int) (models.Premi, error)
 	UpdateTokenPremi(token string, Id int) (models.Premi, error)
 	DeletePremi(premi models.Premi, ID int) (models.Premi, error)
-	GetUserPremi(userId int) (models.User, error)
 }
 
 type premiRepository struct {
@@ -38,13 +39,20 @@ func (r *premiRepository) GetPremi(Id int) (models.Premi, error) {
 	return premi, err
 }
 
-func (r *premiRepository) UpdatePremiUser(premiUpdate models.Premi, ID int) (models.Premi, error) {
+func (r *premiRepository) GetPremiOrderId(orderId int) (models.Premi, error) {
 	var premi models.Premi
-	r.db.First(&premi, ID)
+	err := r.db.Preload("User").First(&premi, "order_id = ?", orderId).Error
+
+	return premi, err
+}
+
+func (r *premiRepository) UpdatePremiUser(premiUpdate models.Premi, Id int) (models.Premi, error) {
+	var premi models.Premi
+	r.db.First(&premi, "id = ?", Id)
 
 	premi = premiUpdate
-
 	err := r.db.Save(&premi).Error
+
 	return premi, err
 }
 
@@ -53,6 +61,15 @@ func (r *premiRepository) UpdatePremiUserStatus(status bool, orderId int) (model
 	r.db.First(&premi, orderId)
 
 	premi.Status = status
+
+	if premi.Status {
+		premi.ActivatedAt = time.Now()
+		premi.ExpiredAt = time.Now().AddDate(0, 1, 0) // insert 30 day
+	} else {
+		premi.ActivatedAt = time.Time{}
+		premi.ExpiredAt = time.Time{}
+	}
+
 	err := r.db.Save(&premi).Error
 	return premi, err
 }
@@ -63,7 +80,6 @@ func (r *premiRepository) UpdateTokenPremi(token string, Id int) (models.Premi, 
 
 	// mengubah premium token
 	premi.Token = token
-
 	err := r.db.Model(&premi).Updates(premi).Error
 
 	return premi, err
@@ -73,11 +89,4 @@ func (r *premiRepository) DeletePremi(premi models.Premi, ID int) (models.Premi,
 	err := r.db.Delete(&premi, ID).Scan(&premi).Error
 
 	return premi, err
-}
-
-func (r *premiRepository) GetUserPremi(userId int) (models.User, error) {
-	var user models.User
-	err := r.db.First(&user, userId).Error
-
-	return user, err
 }
