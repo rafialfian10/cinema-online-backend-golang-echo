@@ -16,6 +16,7 @@ import (
 
 var path_thumbnail = "http://localhost:5000/uploads/thumbnail/"
 var path_trailer = "http://localhost:5000/uploads/trailer/"
+var path_full_movie = "http://localhost:5000/uploads/full_movie/"
 
 type handlerMovie struct {
 	MovieRepository repositories.MovieRepository
@@ -35,6 +36,7 @@ func (h *handlerMovie) FindMovies(c echo.Context) error {
 	for i, movie := range movies {
 		movies[i].Thumbnail = path_thumbnail + movie.Thumbnail
 		movies[i].Trailer = path_trailer + movie.Trailer
+		movies[i].FullMovie = path_full_movie + movie.FullMovie
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: movies})
@@ -52,9 +54,9 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 
 	movie.Thumbnail = path_thumbnail + movie.Thumbnail
 	movie.Trailer = path_trailer + movie.Trailer
+	movie.FullMovie = path_full_movie + movie.FullMovie
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
-
 }
 
 // function create user
@@ -62,8 +64,10 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 	var err error
 	dataThumbnail := c.Get("dataThumbnail").(string)
 	dataTrailer := c.Get("dataTrailer").(string)
+	dataFullMovie := c.Get("dataFullMovie").(string)
 	// fmt.Println("this is data file", dataThumbnail)
 	// fmt.Println("this is data file", dataTrailer)
+	// fmt.Println("this is data file", dataFullMovie)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	categoryIdString := c.FormValue("category_id")
@@ -91,6 +95,7 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 		Description: c.FormValue("description"),
 		Thumbnail:   dataThumbnail,
 		Trailer:     dataTrailer,
+		FullMovie:   dataFullMovie,
 	}
 
 	validation := validator.New()
@@ -114,6 +119,7 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 		Description: request.Description,
 		Thumbnail:   request.Thumbnail,
 		Trailer:     request.Trailer,
+		FullMovie:   request.FullMovie,
 		UserID:      int(userId),
 	}
 
@@ -132,6 +138,7 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 	var err error
 	dataThumbnail := c.Get("dataThumbnail").(string)
 	dataTrailer := c.Get("dataTrailer").(string)
+	dataFullMovie := c.Get("dataFullMovie").(string)
 
 	price, _ := strconv.Atoi(c.FormValue("price"))
 
@@ -155,6 +162,7 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		Description: c.FormValue("description"),
 		Thumbnail:   dataThumbnail,
 		Trailer:     dataTrailer,
+		FullMovie:   dataFullMovie,
 	}
 
 	validation := validator.New()
@@ -211,6 +219,10 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 		movie.Trailer = request.Trailer
 	}
 
+	if request.FullMovie != "" {
+		movie.FullMovie = request.FullMovie
+	}
+
 	data, err := h.MovieRepository.UpdateMovie(movie)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
@@ -254,16 +266,30 @@ func (h *handlerMovie) DeleteThumbnail(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
 }
 
-// function delete thumbnail by id movie
+// function delete trailer by id movie
 func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	// Delete the thumbnail using repository function
 	if err := h.MovieRepository.DeleteTrailerByID(id); err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	// Get the updated movie data after deleting trailer
+	movie, err := h.MovieRepository.GetMovie(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+}
+
+// function delete full movie by id movie
+func (h *handlerMovie) DeleteFullMovie(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	if err := h.MovieRepository.DeleteFullMovieByID(id); err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
 	movie, err := h.MovieRepository.GetMovie(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
@@ -283,6 +309,7 @@ func convertMovieResponse(movie models.Movie) models.MovieResponse {
 	result.Description = movie.Description
 	result.Thumbnail = movie.Thumbnail
 	result.Trailer = movie.Trailer
+	result.FullMovie = movie.FullMovie
 	result.UserID = movie.UserID
 	result.User = movie.User
 

@@ -13,6 +13,7 @@ type Movie struct {
 	Description string       `json:"description" gorm:"type: text"`
 	Thumbnail   string       `json:"thumbnail" gorm:"type: varchar(255)"`
 	Trailer     string       `json:"trailer" gorm:"type: varchar(255)"`
+	FullMovie   string       `json:"full_movie" gorm:"type: varchar(255)"`
 	UserID      int          `json:"user_id" form:"user_id"`
 	User        UserResponse `json:"user"`
 	CreatedAt   time.Time    `json:"created_at"`
@@ -29,7 +30,8 @@ type MovieResponse struct {
 	Link        string             `json:"link"`
 	Description string             `json:"description"`
 	Thumbnail   string             `json:"thumbnail"`
-	Trailer     string             `json:"trailer" gorm:"type: varchar(255)"`
+	FullMovie   string             `json:"full_movie"`
+	Trailer     string             `json:"trailer"`
 	UserID      int                `json:"user_id" form:"user_id"`
 	User        UserResponse       `json:"user"`
 }

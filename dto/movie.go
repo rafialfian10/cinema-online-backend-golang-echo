@@ -9,6 +9,7 @@ type CreateMovieRequest struct {
 	Description string `json:"description" form:"description" gorm:"type: text" validate:"required"`
 	Thumbnail   string `json:"thumbnail" form:"thumbnail" gorm:"type: varchar(255)" validate:"required"`
 	Trailer     string `json:"trailer" form:"trailer" gorm:"type: varchar(255)" validate:"required"`
+	FullMovie   string `json:"full_movie" form:"full_movie" gorm:"type: varchar(255)" validate:"required"`
 }
 
 type UpdateMovieRequest struct {
@@ -20,4 +21,5 @@ type UpdateMovieRequest struct {
 	Description string `json:"description" form:"description"`
 	Thumbnail   string `json:"thumbnail" form:"thumbnail"`
 	Trailer     string `json:"trailer" form:"trailer"`
+	FullMovie   string `json:"full_movie" form:"full_movie"`
 }

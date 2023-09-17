@@ -23,7 +23,7 @@ func UploadPhoto(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 			defer src.Close()
 
-			tempFile, err := ioutil.TempFile("uploads/photo", "image-*.png")
+			tempFile, err := ioutil.TempFile("uploads/photo", "image-photo-*.png")
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, err)
 			}

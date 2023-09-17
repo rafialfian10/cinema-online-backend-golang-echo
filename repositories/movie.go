@@ -16,6 +16,7 @@ type MovieRepository interface {
 	DeleteMovieCategoryByMovieId(movie models.Movie) (models.Movie, error)
 	DeleteThumbnailByID(ID int) error
 	DeleteTrailerByID(ID int) error
+	DeleteFullMovieByID(ID int) error
 }
 
 type movieRepository struct {
@@ -79,4 +80,8 @@ func (r *movieRepository) DeleteThumbnailByID(ID int) error {
 
 func (r *movieRepository) DeleteTrailerByID(ID int) error {
 	return r.db.Model(&models.Movie{}).Where("id = ?", ID).UpdateColumn("trailer", gorm.Expr("NULL")).Error
+}
+
+func (r *movieRepository) DeleteFullMovieByID(ID int) error {
+	return r.db.Model(&models.Movie{}).Where("id = ?", ID).UpdateColumn("full_movie", gorm.Expr("NULL")).Error
 }

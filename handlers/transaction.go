@@ -230,17 +230,17 @@ func (h *handlerTransaction) Notification(c echo.Context) error {
 			h.TransactionRepository.UpdateTransaction("pending", order_id)
 		} else if fraudStatus == "accept" {
 			h.TransactionRepository.UpdateTransaction("success", order_id)
-			SendMail("Transaction Success", transaction)
+			SendMailTransactionMovie("Transaction Success", transaction)
 		}
 	} else if transactionStatus == "settlement" {
 		h.TransactionRepository.UpdateTransaction("success", order_id)
-		SendMail("Transaction Success", transaction)
+		SendMailTransactionMovie("Transaction Success", transaction)
 	} else if transactionStatus == "deny" {
 		h.TransactionRepository.UpdateTransaction("failed", order_id)
-		SendMail("Transaction Failed", transaction)
+		SendMailTransactionMovie("Transaction Failed", transaction)
 	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
 		h.TransactionRepository.UpdateTransaction("failed", order_id)
-		SendMail("Transaction Failed", transaction)
+		SendMailTransactionMovie("Transaction Failed", transaction)
 	} else if transactionStatus == "pending" {
 		h.TransactionRepository.UpdateTransaction("pending", order_id)
 	}
@@ -249,7 +249,7 @@ func (h *handlerTransaction) Notification(c echo.Context) error {
 }
 
 // function sendmail
-func SendMail(status string, transaction models.Transaction) {
+func SendMailTransactionMovie(status string, transaction models.Transaction) {
 	// if status != transaction.Status && (status == "success") {}
 	var CONFIG_SMTP_HOST = "smtp.gmail.com"
 	var CONFIG_SMTP_PORT = 587
