@@ -102,7 +102,7 @@ func (h *handlerPremi) UpdatePremiumByUser(c echo.Context) error {
 
 	// 1. Initiate Snap client
 	var s = snap.Client{}
-	s.New(os.Getenv("SERVER_KEY_PREMIUM"), midtrans.Sandbox)
+	s.New(os.Getenv("SERVER_KEY_TRANSACTION_PREMIUM"), midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param

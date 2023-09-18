@@ -15,7 +15,7 @@ func PremiRoutes(e *echo.Group) {
 
 	e.GET("/premis", h.FindPremis)
 	e.GET("/premi/:id", h.GetPremi)
-	e.POST("/notification_premi", h.NotificationPremi)
+	e.POST("/notification_transaction_premi", h.NotificationPremi)
 	e.PATCH("/premi_user/:id", middleware.Auth(h.UpdatePremiumByUser))
 	e.PATCH("/premi_admin/:id", middleware.Auth(h.UpdatePremiByAdmin))
 	e.DELETE("/premi/:id", middleware.Auth(h.DeletePremi))

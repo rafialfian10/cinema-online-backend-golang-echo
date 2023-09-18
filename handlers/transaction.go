@@ -41,6 +41,7 @@ func (h *handlerTransaction) FindTransactionsByUser(c echo.Context) error {
 	for i, transaction := range transactions {
 		transactions[i].Movie.Thumbnail = path_thumbnail + transaction.Movie.Thumbnail
 		transactions[i].Movie.Trailer = path_trailer + transaction.Movie.Trailer
+		transactions[i].Movie.FullMovie = path_full_movie + transaction.Movie.FullMovie
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transactions})
@@ -56,6 +57,7 @@ func (h *handlerTransaction) FindTransactions(c echo.Context) error {
 	for i, transaction := range transactions {
 		transactions[i].Movie.Thumbnail = path_thumbnail + transaction.Movie.Thumbnail
 		transactions[i].Movie.Trailer = path_trailer + transaction.Movie.Trailer
+		transactions[i].Movie.FullMovie = path_full_movie + transaction.Movie.FullMovie
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transactions})
@@ -73,6 +75,7 @@ func (h *handlerTransaction) GetTransaction(c echo.Context) error {
 
 	transaction.Movie.Thumbnail = path_thumbnail + transaction.Movie.Thumbnail
 	transaction.Movie.Trailer = path_trailer + transaction.Movie.Trailer
+	transaction.Movie.FullMovie = path_full_movie + transaction.Movie.FullMovie
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transaction})
 }
@@ -127,7 +130,7 @@ func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
 
 	// 1. Initiate Snap client
 	var s = snap.Client{}
-	s.New(os.Getenv("SERVER_KEY_TRANSACTION"), midtrans.Sandbox)
+	s.New(os.Getenv("SERVER_KEY_TRANSACTION_MOVIE"), midtrans.Sandbox)
 	// Use to midtrans.Production if you want Production Environment (accept real transaction).
 
 	// 2. Initiate Snap request param
