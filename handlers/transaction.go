@@ -44,7 +44,7 @@ func (h *handlerTransaction) FindTransactionsByUser(c echo.Context) error {
 		transactions[i].Movie.FullMovie = path_full_movie + transaction.Movie.FullMovie
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transactions})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleTransactionResponse(transactions)})
 }
 
 // function get all transactions
@@ -60,7 +60,7 @@ func (h *handlerTransaction) FindTransactions(c echo.Context) error {
 		transactions[i].Movie.FullMovie = path_full_movie + transaction.Movie.FullMovie
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transactions})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleTransactionResponse(transactions)})
 }
 
 // function get transaction by id
@@ -313,8 +313,6 @@ func SendMailTransactionMovie(status string, transaction models.Transaction) {
 func ConvertTransactionResponse(transaction models.Transaction) models.TransactionResponse {
 	return models.TransactionResponse{
 		ID:       transaction.ID,
-		MovieID:  transaction.MovieID,
-		Movie:    transaction.Movie,
 		BuyerID:  transaction.BuyerID,
 		Buyer:    transaction.Buyer,
 		SellerID: transaction.SellerID,
@@ -322,5 +320,85 @@ func ConvertTransactionResponse(transaction models.Transaction) models.Transacti
 		Price:    transaction.Price,
 		Status:   transaction.Status,
 		Token:    transaction.Token,
+		MovieID:  transaction.MovieID,
+		Movie: models.MovieResponse{
+			ID:          transaction.Movie.ID,
+			Title:       transaction.Movie.Title,
+			CategoryID:  transaction.Movie.CategoryID,
+			ReleaseDate: transaction.Movie.ReleaseDate,
+			Price:       transaction.Movie.Price,
+			Link:        transaction.Movie.Link,
+			Description: transaction.Movie.Description,
+			Thumbnail:   transaction.Movie.Thumbnail,
+			Trailer:     transaction.Movie.Trailer,
+			FullMovie:   transaction.Movie.FullMovie,
+			UserID:      transaction.Movie.UserID,
+			User: models.UserResponse{
+				ID:       transaction.Movie.User.ID,
+				Username: transaction.Movie.User.Username,
+				Email:    transaction.Movie.User.Email,
+				Password: transaction.Movie.User.Password,
+				Gender:   transaction.Movie.User.Gender,
+				Phone:    transaction.Movie.User.Phone,
+				Address:  transaction.Movie.User.Address,
+				Photo:    transaction.Movie.User.Photo,
+				Premi:    transaction.Movie.User.Premi,
+			},
+		},
 	}
+}
+
+// function convert multiple transaction
+func ConvertMultipleTransactionResponse(transaction []models.Transaction) []models.TransactionResponse {
+	var result []models.TransactionResponse
+
+	for _, trans := range transaction {
+		transaction := models.TransactionResponse{
+			ID:       trans.ID,
+			BuyerID:  trans.BuyerID,
+			Buyer:    trans.Buyer,
+			SellerID: trans.SellerID,
+			Seller:   trans.Seller,
+			Price:    trans.Price,
+			Status:   trans.Status,
+			Token:    trans.Token,
+			MovieID:  trans.MovieID,
+			Movie: models.MovieResponse{
+				ID:          trans.Movie.ID,
+				Title:       trans.Movie.Title,
+				CategoryID:  trans.Movie.CategoryID,
+				ReleaseDate: trans.Movie.ReleaseDate,
+				Price:       trans.Movie.Price,
+				Link:        trans.Movie.Link,
+				Description: trans.Movie.Description,
+				Thumbnail:   trans.Movie.Thumbnail,
+				Trailer:     trans.Movie.Trailer,
+				FullMovie:   trans.Movie.FullMovie,
+				UserID:      trans.Movie.UserID,
+				User: models.UserResponse{
+					ID:       trans.Movie.User.ID,
+					Username: trans.Movie.User.Username,
+					Email:    trans.Movie.User.Email,
+					Password: trans.Movie.User.Password,
+					Gender:   trans.Movie.User.Gender,
+					Phone:    trans.Movie.User.Phone,
+					Address:  trans.Movie.User.Address,
+					Photo:    trans.Movie.User.Photo,
+					Premi:    trans.Movie.User.Premi,
+				},
+			},
+		}
+
+		for _, cat := range trans.Movie.Category {
+			category := models.CategoryResponse{
+				ID:   cat.ID,
+				Name: cat.Name,
+			}
+			transaction.Movie.Category = append(transaction.Movie.Category, category)
+		}
+
+		result = append(result, transaction)
+	}
+
+	return result
 }

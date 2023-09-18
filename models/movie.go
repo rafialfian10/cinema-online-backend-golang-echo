@@ -6,8 +6,8 @@ type Movie struct {
 	ID          int          `json:"id" gorm:"primary_key:auto_increment"`
 	Title       string       `json:"title" gorm:"type: varchar(255)"`
 	ReleaseDate time.Time    `json:"release_date"`
-	Category    []Category   `json:"category" gorm:"many2many:movie_categories;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CategoryID  []int        `json:"category_id" form:"category_id" gorm:"-"`
+	Category    []Category   `json:"category" gorm:"many2many:movie_categories;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Price       int          `json:"price" gorm:"type: int"`
 	Link        string       `json:"link" gorm:"type: varchar(255)"`
 	Description string       `json:"description" gorm:"type: text"`

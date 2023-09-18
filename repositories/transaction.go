@@ -27,21 +27,38 @@ func RepositoryTransaction(db *gorm.DB) *transactionRepository {
 
 func (r *transactionRepository) FindTransactionsByUser(userId int) ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	err := r.db.Where("buyer_id=?", userId).Preload("Movie.User").Preload("Buyer").Preload("Seller").Find(&transactions).Error
+	err := r.db.Where("buyer_id=?", userId).Preload("Movie.User.Premi").Preload("Buyer.Premi").Preload("Seller.Premi").Find(&transactions).Error
+
+	// for i := range transactions {
+	// 	var movie models.Movie
+	// 	if err := r.db.Model(&transactions[i].Movie).Association("Category").Find(&movie.Category); err != nil {
+	// 		return nil, err
+	// 	}
+
+	// 	var categoryResponses []models.CategoryResponse
+	// 	for _, category := range movie.Category {
+	// 		categoryResponses = append(categoryResponses, models.CategoryResponse{
+	// 			ID:   category.ID,
+	// 			Name: category.Name,
+	// 		})
+	// 	}
+
+	// 	transactions[i].Movie.Category = categoryResponses
+	// }
 
 	return transactions, err
 }
 
 func (r *transactionRepository) FindTransactions() ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	err := r.db.Preload("Movie.User").Preload("Buyer").Preload("Seller").Find(&transactions).Error
+	err := r.db.Preload("Movie.User.Premi").Preload("Buyer.Premi").Preload("Seller.Premi").Find(&transactions).Error
 
 	return transactions, err
 }
 
 func (r *transactionRepository) GetTransaction(transactionId int) (models.Transaction, error) {
 	var transaction models.Transaction
-	err := r.db.Preload("Movie.User").Preload("Buyer").Preload("Seller").First(&transaction, "id = ?", transactionId).Error
+	err := r.db.Preload("Movie.User.Premi").Preload("Buyer.Premi").Preload("Seller.Premi").First(&transaction, "id = ?", transactionId).Error
 
 	return transaction, err
 }
