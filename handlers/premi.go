@@ -50,7 +50,7 @@ func (h *handlerPremi) GetPremi(c echo.Context) error {
 }
 
 // function update premium
-func (h *handlerPremi) UpdatePremiumByUser(c echo.Context) error {
+func (h *handlerPremi) UpdatePremiByUser(c echo.Context) error {
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	statusForm := c.FormValue("status")
 	status, _ := strconv.ParseBool(statusForm)
@@ -168,6 +168,51 @@ func (h *handlerPremi) UpdatePremiByAdmin(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(getPremiumUpdated)})
+}
+
+// function update premium expired
+func (h *handlerPremi) UpdatePremiExpired(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	request := dto.UpdatePremiExpiredRequest{
+		OrderID:     0,
+		Price:       0,
+		Status:      false,
+		Token:       "",
+		ActivatedAt: time.Now(),
+		ExpiredAt:   time.Now(),
+	}
+
+	validation := validator.New()
+	if err := validation.Struct(request); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	premi, err := h.PremiRepository.GetPremi(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, dto.ErrorResult{Status: http.StatusNotFound, Message: "Transaction not found"})
+	}
+
+	premi.OrderID = request.OrderID
+	premi.Price = request.Price
+	premi.Status = request.Status
+	premi.Token = request.Token
+	premi.ActivatedAt = request.ActivatedAt
+	premi.ExpiredAt = request.ExpiredAt
+
+	// Update premium expired
+	premiumExpiredUpdated, err := h.PremiRepository.UpdatePremiExpired(premi, id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	// get the updated premium expired
+	getPremiumExpiredUpdated, err := h.PremiRepository.GetPremi(premiumExpiredUpdated.ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(getPremiumExpiredUpdated)})
 }
 
 // function delete premium

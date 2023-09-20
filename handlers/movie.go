@@ -39,7 +39,7 @@ func (h *handlerMovie) FindMovies(c echo.Context) error {
 		movies[i].FullMovie = path_full_movie + movie.FullMovie
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: movies})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleMovieResponse(movies)})
 }
 
 // function get movie by id
@@ -312,6 +312,8 @@ func convertMovieResponse(movie models.Movie) models.MovieResponse {
 	result.FullMovie = movie.FullMovie
 	result.UserID = movie.UserID
 	result.User = movie.User
+	// result.RatingID = movie.RatingID
+	// result.Rating = movie.Rating
 
 	for _, cat := range movie.Category {
 		categoryResponse := models.CategoryResponse{
@@ -319,6 +321,42 @@ func convertMovieResponse(movie models.Movie) models.MovieResponse {
 			Name: cat.Name,
 		}
 		result.Category = append(result.Category, categoryResponse)
+	}
+
+	return result
+}
+
+// function convert multiple movie response
+func ConvertMultipleMovieResponse(movies []models.Movie) []models.MovieResponse {
+	var result []models.MovieResponse
+
+	for _, movie := range movies {
+		movies := models.MovieResponse{
+			ID:          movie.ID,
+			Title:       movie.Title,
+			ReleaseDate: movie.ReleaseDate,
+			CategoryID:  movie.CategoryID,
+			Price:       movie.Price,
+			Link:        movie.Link,
+			Description: movie.Description,
+			Thumbnail:   movie.Thumbnail,
+			Trailer:     movie.Trailer,
+			FullMovie:   movie.FullMovie,
+			UserID:      movie.UserID,
+			User:        movie.User,
+			// RatingID:    movie.RatingID,
+			// Rating:      movie.Rating,
+		}
+
+		for _, cat := range movie.Category {
+			categoryResponse := models.CategoryResponse{
+				ID:   cat.ID,
+				Name: cat.Name,
+			}
+			movies.Category = append(movies.Category, categoryResponse)
+		}
+
+		result = append(result, movies)
 	}
 
 	return result

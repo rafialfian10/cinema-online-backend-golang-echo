@@ -9,4 +9,5 @@ func RouteInit(e *echo.Group) {
 	CategoryRoutes(e)
 	TransactionRoutes(e)
 	PremiRoutes(e)
+	RatingRoutes(e)
 }

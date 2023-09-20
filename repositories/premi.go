@@ -13,6 +13,7 @@ type PremiRepository interface {
 	GetPremiOrderId(orderId int) (models.Premi, error)
 	UpdatePremiUserStatus(status bool, orderId int) (models.Premi, error)
 	UpdatePremiUser(premi models.Premi, userId int) (models.Premi, error)
+	UpdatePremiExpired(premi models.Premi, userId int) (models.Premi, error)
 	UpdateTokenPremi(token string, Id int) (models.Premi, error)
 	DeletePremi(premi models.Premi, ID int) (models.Premi, error)
 }
@@ -71,6 +72,16 @@ func (r *premiRepository) UpdatePremiUserStatus(status bool, orderId int) (model
 	}
 
 	err := r.db.Save(&premi).Error
+	return premi, err
+}
+
+func (r *premiRepository) UpdatePremiExpired(premiUpdate models.Premi, Id int) (models.Premi, error) {
+	var premi models.Premi
+	r.db.First(&premi, "id = ?", Id)
+
+	premi = premiUpdate
+	err := r.db.Save(&premi).Error
+
 	return premi, err
 }
 
