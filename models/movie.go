@@ -18,10 +18,10 @@ type Movie struct {
 	FullMovie   string       `json:"full_movie" gorm:"type: varchar(255)"`
 	UserID      int          `json:"user_id" form:"user_id"`
 	User        UserResponse `json:"user"`
-	// RatingID    []int        `json:"rating_id" form:"rating_id" gorm:"-"`
-	// Rating      []Rating     `json:"rating" gorm:"many2many:movie_ratings;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	// RatingID    []int            `json:"rating_id" form:"rating_id" gorm:"-"`
+	Rating    []RatingResponse `json:"rating" gorm:"foreignkey:MovieID"`
+	CreatedAt time.Time        `json:"created_at"`
+	UpdatedAt time.Time        `json:"updated_at"`
 }
 
 type MovieResponse struct {
@@ -39,7 +39,7 @@ type MovieResponse struct {
 	UserID      int                `json:"user_id" form:"user_id"`
 	User        UserResponse       `json:"user"`
 	// RatingID    []int              `json:"rating_id" form:"rating_id" gorm:"-"`
-	// Rating      []RatingResponse   `json:"rating" gorm:"many2many:movie_ratings"`
+	Rating []RatingResponse `json:"rating" gorm:"foreignkey:MovieID"`
 }
 
 func (MovieResponse) TableName() string {

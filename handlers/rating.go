@@ -39,7 +39,7 @@ func (h *handlerRating) GetRating(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertRatingResponse(rating)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertRatingResponse(rating)})
 }
 
 // function create rating
@@ -62,8 +62,8 @@ func (h *handlerRating) CreateRating(c echo.Context) error {
 
 	rating := models.Rating{
 		Star:    star,
-		UserID:  int(userId),
 		MovieID: request.MovieID,
+		UserID:  int(userId),
 	}
 
 	data, err := h.RatingRepository.CreateRating(rating)
@@ -73,7 +73,7 @@ func (h *handlerRating) CreateRating(c echo.Context) error {
 
 	data, _ = h.RatingRepository.GetRating(data.ID)
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertRatingResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertRatingResponse(data)})
 }
 
 // function delete rating
@@ -93,15 +93,40 @@ func (h *handlerRating) DeleteRating(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// convert rating
-func convertRatingResponse(rating models.Rating) models.RatingResponse {
-	var result models.RatingResponse
-	result.ID = rating.ID
-	result.Star = rating.Star
-	result.MovieID = rating.MovieID
-	result.Movie = rating.Movie
-	result.UserID = rating.UserID
-	result.User = rating.User
+// function convert rating
+func ConvertRatingResponse(rating models.Rating) models.RatingResponse {
+	var categoryResponses []models.CategoryResponse
+
+	for _, category := range rating.Movie.Category {
+		categoryResponse := models.CategoryResponse{
+			ID:   category.ID,
+			Name: category.Name,
+		}
+		categoryResponses = append(categoryResponses, categoryResponse)
+	}
+
+	result := models.RatingResponse{
+		ID:      rating.ID,
+		Star:    rating.Star,
+		MovieID: rating.MovieID,
+		Movie: models.MovieResponse{
+			ID:          rating.Movie.ID,
+			Title:       rating.Movie.Title,
+			ReleaseDate: rating.Movie.ReleaseDate,
+			CategoryID:  rating.Movie.CategoryID,
+			Category:    categoryResponses,
+			Price:       rating.Movie.Price,
+			Link:        rating.Movie.Link,
+			Description: rating.Movie.Description,
+			Thumbnail:   rating.Movie.Thumbnail,
+			FullMovie:   rating.Movie.FullMovie,
+			Trailer:     rating.Movie.Trailer,
+			UserID:      rating.Movie.UserID,
+			User:        rating.Movie.User,
+		},
+		UserID: rating.UserID,
+		User:   rating.User,
+	}
 
 	return result
 }
@@ -111,13 +136,37 @@ func ConvertMultipleRatingResponse(ratings []models.Rating) []models.RatingRespo
 	var result []models.RatingResponse
 
 	for _, rating := range ratings {
+		var categoryResponses []models.CategoryResponse
+
+		for _, category := range rating.Movie.Category {
+			categoryResponse := models.CategoryResponse{
+				ID:   category.ID,
+				Name: category.Name,
+			}
+			categoryResponses = append(categoryResponses, categoryResponse)
+		}
+
 		ratings := models.RatingResponse{
 			ID:      rating.ID,
 			Star:    rating.Star,
 			MovieID: rating.MovieID,
-			Movie:   rating.Movie,
-			UserID:  rating.UserID,
-			User:    rating.User,
+			Movie: models.MovieResponse{
+				ID:          rating.Movie.ID,
+				Title:       rating.Movie.Title,
+				ReleaseDate: rating.Movie.ReleaseDate,
+				CategoryID:  rating.Movie.CategoryID,
+				Category:    categoryResponses,
+				Price:       rating.Movie.Price,
+				Link:        rating.Movie.Link,
+				Description: rating.Movie.Description,
+				Thumbnail:   rating.Movie.Thumbnail,
+				FullMovie:   rating.Movie.FullMovie,
+				Trailer:     rating.Movie.Trailer,
+				UserID:      rating.Movie.UserID,
+				User:        rating.Movie.User,
+			},
+			UserID: rating.UserID,
+			User:   rating.User,
 		}
 
 		result = append(result, ratings)

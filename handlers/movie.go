@@ -56,7 +56,7 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 	movie.Trailer = path_trailer + movie.Trailer
 	movie.FullMovie = path_full_movie + movie.FullMovie
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
 }
 
 // function create user
@@ -130,7 +130,7 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 
 	movie, _ = h.MovieRepository.GetMovie(movie.ID)
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
 }
 
 // function update movie
@@ -245,7 +245,7 @@ func (h *handlerMovie) DeleteMovie(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(data)})
 }
 
 // function delete thumbnail by id movie
@@ -263,7 +263,7 @@ func (h *handlerMovie) DeleteThumbnail(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
 }
 
 // function delete trailer by id movie
@@ -279,7 +279,7 @@ func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
 }
 
 // function delete full movie by id movie
@@ -295,15 +295,16 @@ func (h *handlerMovie) DeleteFullMovie(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: convertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
 }
 
 // function convert movie response
-func convertMovieResponse(movie models.Movie) models.MovieResponse {
+func onvertMovieResponse(movie models.Movie) models.MovieResponse {
 	var result models.MovieResponse
 	result.ID = movie.ID
 	result.Title = movie.Title
 	result.ReleaseDate = movie.ReleaseDate
+	result.CategoryID = movie.CategoryID
 	result.Price = movie.Price
 	result.Link = movie.Link
 	result.Description = movie.Description
@@ -313,7 +314,16 @@ func convertMovieResponse(movie models.Movie) models.MovieResponse {
 	result.UserID = movie.UserID
 	result.User = movie.User
 	// result.RatingID = movie.RatingID
-	// result.Rating = movie.Rating
+	result.Rating = make([]models.RatingResponse, len(movie.Rating))
+	for i, rating := range movie.Rating {
+		result.Rating[i] = models.RatingResponse{
+			ID:      rating.ID,
+			Star:    rating.Star,
+			MovieID: rating.MovieID,
+			UserID:  rating.UserID,
+			User:    rating.User,
+		}
+	}
 
 	for _, cat := range movie.Category {
 		categoryResponse := models.CategoryResponse{
@@ -345,7 +355,18 @@ func ConvertMultipleMovieResponse(movies []models.Movie) []models.MovieResponse 
 			UserID:      movie.UserID,
 			User:        movie.User,
 			// RatingID:    movie.RatingID,
-			// Rating:      movie.Rating,
+		}
+
+		movies.Rating = []models.RatingResponse{}
+
+		for _, rating := range movie.Rating {
+			movies.Rating = append(movies.Rating, models.RatingResponse{
+				ID:      rating.ID,
+				Star:    rating.Star,
+				MovieID: rating.MovieID,
+				UserID:  rating.UserID,
+				User:    rating.User,
+			})
 		}
 
 		for _, cat := range movie.Category {
