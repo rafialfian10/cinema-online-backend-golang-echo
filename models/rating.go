@@ -16,12 +16,12 @@ type Rating struct {
 }
 
 type RatingResponse struct {
-	ID      int           `json:"id" gorm:"primary_key:auto_increment"`
-	Star    int           `json:"star"`
-	MovieID int           `json:"movie_id"`
-	Movie   MovieResponse `json:"movie"`
-	UserID  int           `json:"user_id"`
-	User    UserResponse  `json:"user"`
+	ID      int `json:"id" gorm:"primary_key:auto_increment"`
+	Star    int `json:"star"`
+	MovieID int `json:"movie_id"`
+	// Movie   MovieResponse `json:"movie"`
+	UserID int          `json:"user_id"`
+	User   UserResponse `json:"user"`
 }
 
 func (RatingResponse) TableName() string {
