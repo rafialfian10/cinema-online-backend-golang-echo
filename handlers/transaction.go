@@ -353,6 +353,18 @@ func ConvertMultipleTransactionResponse(transaction []models.Transaction) []mode
 	var result []models.TransactionResponse
 
 	for _, trans := range transaction {
+		var ratings []models.RatingResponse
+		for _, rating := range trans.Movie.Rating {
+			r := models.RatingResponse{
+				ID:      rating.ID,
+				Star:    rating.Star,
+				MovieID: rating.MovieID,
+				UserID:  rating.UserID,
+				User:    rating.User,
+			}
+			ratings = append(ratings, r)
+		}
+
 		transaction := models.TransactionResponse{
 			ID:       trans.ID,
 			BuyerID:  trans.BuyerID,
@@ -386,6 +398,7 @@ func ConvertMultipleTransactionResponse(transaction []models.Transaction) []mode
 					Photo:    trans.Movie.User.Photo,
 					Premi:    trans.Movie.User.Premi,
 				},
+				Rating: ratings,
 			},
 		}
 
