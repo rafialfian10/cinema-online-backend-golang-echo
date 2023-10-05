@@ -186,6 +186,7 @@ func ConvertUserResponse(user models.User) models.UserResponse {
 		Phone:    user.Phone,
 		Address:  user.Address,
 		Photo:    user.Photo,
+		Role:     user.Role,
 		Premi: models.PremiResponse{
 			ID:          user.Premi.ID,
 			OrderID:     user.Premi.OrderID,

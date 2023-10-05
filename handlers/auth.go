@@ -8,6 +8,7 @@ import (
 	"cinemaonline/repositories"
 	"errors"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -29,6 +30,14 @@ func HandlerAuth(AuthRepository repositories.AuthRepository) *handlerAuth {
 	return &handlerAuth{AuthRepository}
 }
 
+// function random id user
+func generateRandomID() int {
+	rand.Seed(time.Now().UnixNano())
+	min := 10000000000 // Min 11 digit
+	max := 99999999999 // Max 11 digit
+	return rand.Intn(max-min+1) + min
+}
+
 // function Register
 func (h *handlerAuth) Register(c echo.Context) error {
 	request := new(dto.RegisterRequest)
@@ -42,6 +51,9 @@ func (h *handlerAuth) Register(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
+
+	// Generate random ID
+	randomID := generateRandomID()
 
 	// Check if the username or email already exists in the database
 	checkUser, err := h.AuthRepository.FindUserByUsernameOrEmail(request.Username, request.Email)
@@ -60,6 +72,7 @@ func (h *handlerAuth) Register(c echo.Context) error {
 	}
 
 	user := models.User{
+		ID:       randomID,
 		Username: request.Username,
 		Email:    request.Email,
 		Password: password,
@@ -160,6 +173,7 @@ func (h *handlerAuth) Login(c echo.Context) error {
 	user.Photo = path_photo_auth + user.Photo
 
 	loginResponse := dto.LoginResponse{
+		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Role:     user.Role,

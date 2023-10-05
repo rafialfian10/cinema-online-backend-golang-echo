@@ -26,6 +26,7 @@ type UserResponse struct {
 	Phone    string        `json:"phone"`
 	Address  string        `json:"address"`
 	Photo    string        `json:"photo"`
+	Role     string        `json:"role"`
 	Premi    PremiResponse `json:"premi" gorm:"foreignKey:UserID"`
 }
 

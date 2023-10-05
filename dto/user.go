@@ -17,7 +17,6 @@ type UpdateUserRequest struct {
 }
 
 type UserResponse struct {
-	ID       int    `json:"id"`
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required"`
 	Password string `json:"password" validate:"required"`
