@@ -173,7 +173,7 @@ func (h *handlerAuth) Login(c echo.Context) error {
 	user.Photo = path_photo_auth + user.Photo
 
 	loginResponse := dto.LoginResponse{
-		ID:       user.ID,
+		// ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Role:     user.Role,
