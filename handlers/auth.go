@@ -20,12 +20,10 @@ import (
 
 var path_photo_auth = "http://localhost:5000/uploads/photo/"
 
-// Handle struct
 type handlerAuth struct {
 	AuthRepository repositories.AuthRepository
 }
 
-// Handle Authentication
 func HandlerAuth(AuthRepository repositories.AuthRepository) *handlerAuth {
 	return &handlerAuth{AuthRepository}
 }
@@ -38,7 +36,6 @@ func generateRandomID() int {
 	return rand.Intn(max-min+1) + min
 }
 
-// function Register
 func (h *handlerAuth) Register(c echo.Context) error {
 	request := new(dto.RegisterRequest)
 	// Bind adalah fungsi yang digunakan untuk mengambil data dari permintaan HTTP dan mengisi nilai-nilai dalam objek request
@@ -102,7 +99,6 @@ func (h *handlerAuth) Register(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function register admin
 func (h *handlerAuth) RegisterAdmin(c echo.Context) error {
 	request := new(dto.RegisterRequest)
 	if err := c.Bind(request); err != nil {
@@ -135,7 +131,6 @@ func (h *handlerAuth) RegisterAdmin(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function Login
 func (h *handlerAuth) Login(c echo.Context) error {
 	request := new(dto.LoginRequest)
 	if err := c.Bind(request); err != nil {
@@ -183,13 +178,11 @@ func (h *handlerAuth) Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: loginResponse})
 }
 
-// function check auth
 func (h *handlerAuth) CheckAuth(c echo.Context) error {
 	userLogin := c.Get("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	user, _ := h.AuthRepository.CheckAuth(int(userId))
-
 	user.Photo = path_photo_auth + user.Photo
 
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertAuthResponse(user)})

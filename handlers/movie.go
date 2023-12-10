@@ -26,7 +26,6 @@ func HandlerMovie(MovieRepository repositories.MovieRepository) *handlerMovie {
 	return &handlerMovie{MovieRepository}
 }
 
-// function get all movie
 func (h *handlerMovie) FindMovies(c echo.Context) error {
 	movies, err := h.MovieRepository.FindMovies()
 	if err != nil {
@@ -42,7 +41,6 @@ func (h *handlerMovie) FindMovies(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleMovieResponse(movies)})
 }
 
-// function get movie by id
 func (h *handlerMovie) GetMovie(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -56,10 +54,9 @@ func (h *handlerMovie) GetMovie(c echo.Context) error {
 	movie.Trailer = path_trailer + movie.Trailer
 	movie.FullMovie = path_full_movie + movie.FullMovie
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(movie)})
 }
 
-// function create user
 func (h *handlerMovie) CreateMovie(c echo.Context) error {
 	var err error
 	dataThumbnail := c.Get("dataThumbnail").(string)
@@ -130,10 +127,9 @@ func (h *handlerMovie) CreateMovie(c echo.Context) error {
 
 	movie, _ = h.MovieRepository.GetMovie(movie.ID)
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(movie)})
 }
 
-// function update movie
 func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 	var err error
 	dataThumbnail := c.Get("dataThumbnail").(string)
@@ -231,7 +227,6 @@ func (h *handlerMovie) UpdateMovie(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function delete movie
 func (h *handlerMovie) DeleteMovie(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -245,28 +240,24 @@ func (h *handlerMovie) DeleteMovie(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(data)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(data)})
 }
 
-// function delete thumbnail by id movie
 func (h *handlerMovie) DeleteThumbnail(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	// Delete the thumbnail using repository function
 	if err := h.MovieRepository.DeleteThumbnailByID(id); err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	// Get the updated movie data after deleting thumbnail
 	movie, err := h.MovieRepository.GetMovie(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(movie)})
 }
 
-// function delete trailer by id movie
 func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -279,10 +270,9 @@ func (h *handlerMovie) DeleteTrailer(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(movie)})
 }
 
-// function delete full movie by id movie
 func (h *handlerMovie) DeleteFullMovie(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -295,11 +285,10 @@ func (h *handlerMovie) DeleteFullMovie(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: onvertMovieResponse(movie)})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMovieResponse(movie)})
 }
 
-// function convert movie response
-func onvertMovieResponse(movie models.Movie) models.MovieResponse {
+func ConvertMovieResponse(movie models.Movie) models.MovieResponse {
 	var result models.MovieResponse
 	result.ID = movie.ID
 	result.Title = movie.Title
@@ -313,7 +302,6 @@ func onvertMovieResponse(movie models.Movie) models.MovieResponse {
 	result.FullMovie = movie.FullMovie
 	result.UserID = movie.UserID
 	result.User = movie.User
-	// result.RatingID = movie.RatingID
 	result.Rating = make([]models.RatingResponse, len(movie.Rating))
 	for i, rating := range movie.Rating {
 		result.Rating[i] = models.RatingResponse{
@@ -336,7 +324,6 @@ func onvertMovieResponse(movie models.Movie) models.MovieResponse {
 	return result
 }
 
-// function convert multiple movie response
 func ConvertMultipleMovieResponse(movies []models.Movie) []models.MovieResponse {
 	var result []models.MovieResponse
 

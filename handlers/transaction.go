@@ -28,7 +28,6 @@ func HandlerTransaction(TransactionRepository repositories.TransactionRepository
 	return &handlerTransaction{TransactionRepository}
 }
 
-// function get all transactions by user
 func (h *handlerTransaction) FindTransactionsByUser(c echo.Context) error {
 	userLogin := c.Get("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
@@ -47,7 +46,6 @@ func (h *handlerTransaction) FindTransactionsByUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleTransactionResponse(transactions)})
 }
 
-// function get all transactions
 func (h *handlerTransaction) FindTransactions(c echo.Context) error {
 	transactions, err := h.TransactionRepository.FindTransactions()
 	if err != nil {
@@ -63,7 +61,6 @@ func (h *handlerTransaction) FindTransactions(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleTransactionResponse(transactions)})
 }
 
-// function get transaction by id
 func (h *handlerTransaction) GetTransaction(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -80,7 +77,6 @@ func (h *handlerTransaction) GetTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: transaction})
 }
 
-// function create transaction
 func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
 	request := new(dto.CreateTransactionRequest)
 	if err := c.Bind(request); err != nil {
@@ -160,7 +156,6 @@ func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertTransactionResponse(transactionUpdated)})
 }
 
-// function update transaction by admin
 func (h *handlerTransaction) UpdateTransactionByAdmin(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -193,7 +188,6 @@ func (h *handlerTransaction) UpdateTransactionByAdmin(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertTransactionResponse(getTransactionUpdated)})
 }
 
-// function delete transaction
 func (h *handlerTransaction) DeleteTransaction(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -210,7 +204,6 @@ func (h *handlerTransaction) DeleteTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertTransactionResponse(data)})
 }
 
-// function notification
 func (h *handlerTransaction) Notification(c echo.Context) error {
 	var notificationPayload map[string]interface{}
 
@@ -251,7 +244,6 @@ func (h *handlerTransaction) Notification(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: notificationPayload})
 }
 
-// function sendmail
 func SendMailTransactionMovie(status string, transaction models.Transaction) {
 	// if status != transaction.Status && (status == "success") {}
 	var CONFIG_SMTP_HOST = "smtp.gmail.com"
@@ -309,7 +301,6 @@ func SendMailTransactionMovie(status string, transaction models.Transaction) {
 	log.Println("Mail sent! to " + transaction.Buyer.Email)
 }
 
-// function convert transaction
 func ConvertTransactionResponse(transaction models.Transaction) models.TransactionResponse {
 	return models.TransactionResponse{
 		ID:       transaction.ID,
@@ -348,7 +339,6 @@ func ConvertTransactionResponse(transaction models.Transaction) models.Transacti
 	}
 }
 
-// function convert multiple transaction
 func ConvertMultipleTransactionResponse(transaction []models.Transaction) []models.TransactionResponse {
 	var result []models.TransactionResponse
 
@@ -409,9 +399,7 @@ func ConvertMultipleTransactionResponse(transaction []models.Transaction) []mode
 			}
 			transaction.Movie.Category = append(transaction.Movie.Category, category)
 		}
-
 		result = append(result, transaction)
 	}
-
 	return result
 }

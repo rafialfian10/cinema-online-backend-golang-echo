@@ -82,7 +82,6 @@ func (r *transactionRepository) UpdateTokenTransaction(token string, transaction
 	var transaction models.Transaction
 	r.db.Preload("Movie.User").Preload("Buyer").Preload("Seller").First(&transaction, "id = ?", transactionId)
 
-	// mengubah transaction token
 	transaction.Token = token
 	err := r.db.Model(&transaction).Updates(transaction).Error
 

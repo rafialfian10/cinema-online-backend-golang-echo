@@ -19,7 +19,6 @@ func HandlerCategory(CategoryRepository repositories.CategoryRepository) *handle
 	return &handlerCategory{CategoryRepository}
 }
 
-// function get all category
 func (h *handlerCategory) FindCategories(c echo.Context) error {
 	categories, err := h.CategoryRepository.FindCategories()
 	if err != nil {
@@ -29,7 +28,6 @@ func (h *handlerCategory) FindCategories(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: categories})
 }
 
-// function get by id category
 func (h *handlerCategory) GetCategory(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -41,7 +39,6 @@ func (h *handlerCategory) GetCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: category})
 }
 
-// function create category
 func (h *handlerCategory) CreateCategory(c echo.Context) error {
 	request := new(dto.CreateCategoryRequest)
 	if err := c.Bind(request); err != nil {
@@ -66,7 +63,6 @@ func (h *handlerCategory) CreateCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function update category
 func (h *handlerCategory) UpdateCategory(c echo.Context) error {
 	request := new(dto.UpdateCategoryRequest)
 	if err := c.Bind(request); err != nil {
@@ -93,7 +89,6 @@ func (h *handlerCategory) UpdateCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function delete category
 func (h *handlerCategory) DeleteCategory(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 

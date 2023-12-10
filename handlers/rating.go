@@ -20,7 +20,6 @@ func HandlerRating(RatingRepository repositories.RatingRepository) *handlerRatin
 	return &handlerRating{RatingRepository}
 }
 
-// function get all rating
 func (h *handlerRating) FindRatings(c echo.Context) error {
 	ratings, err := h.RatingRepository.FindRatings()
 	if err != nil {
@@ -30,7 +29,6 @@ func (h *handlerRating) FindRatings(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultipleRatingResponse(ratings)})
 }
 
-// function get by id rating
 func (h *handlerRating) GetRating(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -42,7 +40,6 @@ func (h *handlerRating) GetRating(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertRatingResponse(rating)})
 }
 
-// function create rating
 func (h *handlerRating) CreateRating(c echo.Context) error {
 	request := new(dto.CreateRatingRequest)
 	if err := c.Bind(request); err != nil {
@@ -76,7 +73,6 @@ func (h *handlerRating) CreateRating(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertRatingResponse(data)})
 }
 
-// function delete rating
 func (h *handlerRating) DeleteRating(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -93,7 +89,6 @@ func (h *handlerRating) DeleteRating(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: data})
 }
 
-// function convert rating
 func ConvertRatingResponse(rating models.Rating) models.RatingResponse {
 	// var categoryResponses []models.CategoryResponse
 
@@ -127,11 +122,9 @@ func ConvertRatingResponse(rating models.Rating) models.RatingResponse {
 		UserID: rating.UserID,
 		User:   rating.User,
 	}
-
 	return result
 }
 
-// function convert multiple rating
 func ConvertMultipleRatingResponse(ratings []models.Rating) []models.RatingResponse {
 	var result []models.RatingResponse
 
@@ -168,9 +161,7 @@ func ConvertMultipleRatingResponse(ratings []models.Rating) []models.RatingRespo
 			UserID: rating.UserID,
 			User:   rating.User,
 		}
-
 		result = append(result, ratings)
 	}
-
 	return result
 }

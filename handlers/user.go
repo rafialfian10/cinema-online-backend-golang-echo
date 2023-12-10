@@ -22,7 +22,6 @@ func HandlerUser(UserRepository repositories.UserRepository) *handlerUser {
 	return &handlerUser{UserRepository}
 }
 
-// function get all user
 func (h *handlerUser) FindUsers(c echo.Context) error {
 	users, err := h.UserRepository.FindUsers()
 	if err != nil {
@@ -36,7 +35,6 @@ func (h *handlerUser) FindUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: users})
 }
 
-// function get user by id
 func (h *handlerUser) GetUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -51,7 +49,6 @@ func (h *handlerUser) GetUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(user)})
 }
 
-// function create user
 func (h *handlerUser) CreateUser(c echo.Context) error {
 	request := new(dto.CreateUserRequest)
 	if err := c.Bind(request); err != nil {
@@ -78,7 +75,6 @@ func (h *handlerUser) CreateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(data)})
 }
 
-// function update user
 func (h *handlerUser) UpdateUser(c echo.Context) error {
 	var err error
 	dataPhoto := c.Get("dataPhoto").(string)
@@ -145,7 +141,6 @@ func (h *handlerUser) UpdateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertUserResponse(data)})
 }
 
-// function delete user
 func (h *handlerUser) DeleteUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 

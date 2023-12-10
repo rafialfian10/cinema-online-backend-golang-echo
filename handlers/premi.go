@@ -27,7 +27,6 @@ func HandlerPremi(PremiRepository repositories.PremiRepository) *handlerPremi {
 	return &handlerPremi{PremiRepository}
 }
 
-// function get all premiums
 func (h *handlerPremi) FindPremis(c echo.Context) error {
 	premiums, err := h.PremiRepository.FindPremis()
 	if err != nil {
@@ -37,7 +36,6 @@ func (h *handlerPremi) FindPremis(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: premiums})
 }
 
-// function get by id premium
 func (h *handlerPremi) GetPremi(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -49,7 +47,6 @@ func (h *handlerPremi) GetPremi(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: premium})
 }
 
-// function update premium
 func (h *handlerPremi) UpdatePremiByUser(c echo.Context) error {
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	statusForm := c.FormValue("status")
@@ -132,7 +129,6 @@ func (h *handlerPremi) UpdatePremiByUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(datapremiUpdated)})
 }
 
-// function update premium by admin
 func (h *handlerPremi) UpdatePremiByAdmin(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -170,7 +166,6 @@ func (h *handlerPremi) UpdatePremiByAdmin(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(getPremiumUpdated)})
 }
 
-// function update premium expired
 func (h *handlerPremi) UpdatePremiExpired(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -215,7 +210,6 @@ func (h *handlerPremi) UpdatePremiExpired(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(getPremiumExpiredUpdated)})
 }
 
-// function delete premium
 func (h *handlerPremi) DeletePremi(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -232,7 +226,6 @@ func (h *handlerPremi) DeletePremi(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: dataPremium})
 }
 
-// function notification
 func (h *handlerPremi) NotificationPremi(c echo.Context) error {
 	var notificationPayload map[string]interface{}
 
@@ -279,7 +272,6 @@ func (h *handlerPremi) NotificationPremi(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: notificationPayload})
 }
 
-// function SendMailPremium
 func SendMailPremi(status string, premi models.Premi) {
 	var CONFIG_SMTP_HOST = "smtp.gmail.com"
 	var CONFIG_SMTP_PORT = 587
@@ -335,7 +327,6 @@ func SendMailPremi(status string, premi models.Premi) {
 	log.Println("Mail sent! to " + premi.User.Email)
 }
 
-// function convert premium
 func ConvertPremiResponse(premi models.Premi) models.PremiResponse {
 	return models.PremiResponse{
 		ID:          premi.ID,
