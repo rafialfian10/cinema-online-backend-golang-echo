@@ -33,7 +33,7 @@ func (h *handlerPremi) FindPremis(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: premiums})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertMultiplePremiResponse(premiums)})
 }
 
 func (h *handlerPremi) GetPremi(c echo.Context) error {
@@ -44,7 +44,7 @@ func (h *handlerPremi) GetPremi(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: premium})
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: ConvertPremiResponse(premium)})
 }
 
 func (h *handlerPremi) UpdatePremiByUser(c echo.Context) error {
@@ -338,4 +338,23 @@ func ConvertPremiResponse(premi models.Premi) models.PremiResponse {
 		ActivatedAt: premi.ActivatedAt,
 		ExpiredAt:   premi.ExpiredAt,
 	}
+}
+
+func ConvertMultiplePremiResponse(premis []models.Premi) []models.PremiResponse {
+	var result []models.PremiResponse
+
+	for _, movie := range premis {
+		premis := models.PremiResponse{
+			ID:      movie.ID,
+			OrderID: movie.OrderID,
+			Status:  movie.Status,
+			Price:   movie.Price,
+			Token:   movie.Token,
+			UserID:  movie.UserID,
+		}
+
+		result = append(result, premis)
+	}
+
+	return result
 }
