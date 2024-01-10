@@ -174,8 +174,8 @@ func (h *handlerPremi) UpdatePremiExpired(c echo.Context) error {
 		Price:       0,
 		Status:      false,
 		Token:       "",
-		ActivatedAt: time.Now(),
-		ExpiredAt:   time.Now(),
+		ActivatedAt: time.Time{},
+		ExpiredAt:   time.Time{},
 	}
 
 	validation := validator.New()

@@ -13,8 +13,8 @@ func PremiRoutes(e *echo.Group) {
 	premiRepository := repositories.RepositoryPremi(mysql.DB)
 	h := handlers.HandlerPremi(premiRepository)
 
-	e.GET("/premis", h.FindPremis)
-	e.GET("/premi/:id", h.GetPremi)
+	e.GET("/premis", middleware.Auth(h.FindPremis))
+	e.GET("/premi/:id", middleware.Auth(h.GetPremi))
 	e.POST("/notification_transaction_premi", h.NotificationPremi)
 	e.PATCH("/premi_user/:id", middleware.Auth(h.UpdatePremiByUser))
 	e.PATCH("/premi_admin/:id", middleware.Auth(h.UpdatePremiByAdmin))
