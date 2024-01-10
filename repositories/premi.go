@@ -28,7 +28,7 @@ func RepositoryPremi(db *gorm.DB) *premiRepository {
 
 func (r *premiRepository) FindPremis() ([]models.Premi, error) {
 	var premis []models.Premi
-	err := r.db.Preload("User").Find(&premis).Error
+	err := r.db.Preload("User").Order("id DESC").Find(&premis).Error
 
 	return premis, err
 }

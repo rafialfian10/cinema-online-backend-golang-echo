@@ -24,7 +24,7 @@ func RepositoryCategory(db *gorm.DB) *categoryRepository {
 
 func (r *categoryRepository) FindCategories() ([]models.Category, error) {
 	var categories []models.Category
-	err := r.db.Find(&categories).Error
+	err := r.db.Order("id DESC").Find(&categories).Error
 
 	return categories, err
 }

@@ -24,7 +24,7 @@ func RepositoryRating(db *gorm.DB) *ratingRepository {
 
 func (r *ratingRepository) FindRatings() ([]models.Rating, error) {
 	var ratings []models.Rating
-	err := r.db.Preload("User.Premi").Find(&ratings).Error
+	err := r.db.Preload("User.Premi").Order("id DESC").Find(&ratings).Error
 
 	return ratings, err
 }

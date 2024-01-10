@@ -29,7 +29,7 @@ func RepositoryMovie(db *gorm.DB) *movieRepository {
 
 func (r *movieRepository) FindMovies() ([]models.Movie, error) {
 	var movies []models.Movie
-	err := r.db.Preload("User.Premi").Preload("Category").Preload("Rating.User.Premi").Find(&movies).Error
+	err := r.db.Preload("User.Premi").Preload("Category").Preload("Rating.User.Premi").Order("id DESC").Find(&movies).Error
 
 	return movies, err
 }
