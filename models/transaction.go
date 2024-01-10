@@ -26,6 +26,6 @@ type TransactionResponse struct {
 	SellerID int           `json:"seller_id"`
 	Seller   UserResponse  `json:"seller"`
 	Price    int           `json:"price"`
-	Status   string        `json:"status"  gorm:"type:varchar(25)"`
+	Status   string        `json:"status" gorm:"type:varchar(25)"`
 	Token    string        `json:"token" gorm:"type: varchar(255)"`
 }
