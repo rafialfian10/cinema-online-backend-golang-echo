@@ -12,7 +12,7 @@ type User struct {
 	Address   string    `json:"address" gorm:"type: text"`
 	Photo     string    `json:"photo" gorm:"type: varchar(255)"`
 	Role      string    `json:"role" gorm:"type: varchar(255)"`
-	Premi     Premi     `json:"premi" gorm:"foreignKey:UserID"`
+	Premi     Premi     `json:"premi" gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

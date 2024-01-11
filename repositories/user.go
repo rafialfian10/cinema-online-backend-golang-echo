@@ -49,9 +49,25 @@ func (r *userRepository) UpdateUser(user models.User) (models.User, error) {
 }
 
 func (r *userRepository) DeleteUser(user models.User, ID int) (models.User, error) {
-	err := r.db.Raw("DELETE FROM users WHERE id=?", ID).Scan(&user).Error
+	tx := r.db.Begin()
 
-	return user, err
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Where("user_id = ?", ID).Delete(&models.Premi{}).Error; err != nil {
+		tx.Rollback()
+		return user, err
+	}
+
+	if err := tx.Delete(&user, ID).Error; err != nil {
+		tx.Rollback()
+		return user, err
+	}
+
+	return user, tx.Commit().Error
 }
 
 func (r *userRepository) GetProfile(userId int) (models.User, error) {
